@@ -22,6 +22,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public double? Longitude { get; set; }
         public string Endereco { get; set; }
         public string Telefone { get; set; }
+        public string Apelido { get; set; }
 
         public virtual ICollection<Cliente> Cliente { get; set; }
         public virtual ICollection<Configuracao> Configuracao { get; set; }

@@ -145,6 +145,11 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
 
+                entity.Property(e => e.Apelido)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Cnpj)
                     .HasColumnName("CNPJ")
                     .HasMaxLength(20)
@@ -238,6 +243,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasMaxLength(11)
                     .IsUnicode(false);
 
+                entity.Property(e => e.DataAdmissao).HasColumnType("date");
+
                 entity.Property(e => e.DataNascimento).HasColumnType("date");
 
                 entity.Property(e => e.Email).IsUnicode(false);
@@ -248,6 +255,11 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.IdgrupoPermissao).HasColumnName("IDGrupoPermissao");
 
+                entity.Property(e => e.Matricula)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Nome)
                     .IsRequired()
                     .HasMaxLength(200)
@@ -256,6 +268,10 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                 entity.Property(e => e.Rg)
                     .HasColumnName("RG")
                     .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Senha)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Telefone)

@@ -15,6 +15,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public int Idusuario { get; set; }
         public int Idempresa { get; set; }
         public string Nome { get; set; }
+        public string Matricula { get; set; }
         public string Cpf { get; set; }
         public int Idcargo { get; set; }
         public string Email { get; set; }
@@ -23,6 +24,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public string Telefone { get; set; }
         public string Rg { get; set; }
         public int IdgrupoPermissao { get; set; }
+        public string Senha { get; set; }
+        public DateTime? DataAdmissao { get; set; }
 
         public virtual Cargo IdcargoNavigation { get; set; }
         public virtual Empresa IdempresaNavigation { get; set; }

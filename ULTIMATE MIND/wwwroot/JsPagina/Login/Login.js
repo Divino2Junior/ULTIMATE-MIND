@@ -5,8 +5,6 @@ $("#txtCPF").mask("999.999.999-99");
 function loginSucesso(data) {
     if (data <= 1)
         window.location = urlSite + "Home/"
-    else
-        window.location = urlSite + "login/SelecionaEmpresa"
 }
 
 $("#frmLogin").on("submit", function (event) {
