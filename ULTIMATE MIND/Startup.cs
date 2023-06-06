@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ULTIMATE_MIND.Arquitetura.Util;
 
 namespace ULTIMATE_MIND
 {
@@ -20,13 +19,47 @@ namespace ULTIMATE_MIND
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddHealthChecks();
+            services.AddAuthentication(Constantes.CookieUser)
+                   .AddCookie(Constantes.CookieUser, options =>
+                   {
+                       options.AccessDeniedPath = new PathString("/");
+                       options.Cookie = new CookieBuilder
+                       {
+                           //Domain = "",
+                           HttpOnly = true,
+                           Name = Constantes.UsuarioLogado,
+                           Path = "/",
+                           SameSite = SameSiteMode.Lax,
+                           SecurePolicy = CookieSecurePolicy.SameAsRequest
+                       };
+
+                       options.LoginPath = new PathString("/");
+                       options.ReturnUrlParameter = "RequestPath";
+                       options.SlidingExpiration = true;
+                   });
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+            });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = int.MaxValue;
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
+            });
+
+            services.AddMvc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -36,13 +69,15 @@ namespace ULTIMATE_MIND
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication(); // Adiciona a autenticação ao pipeline de solicitação
 
             app.UseAuthorization();
 
@@ -50,7 +85,7 @@ namespace ULTIMATE_MIND
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Login}/{action=Index}/{id?}");
             });
         }
     }

@@ -53,7 +53,6 @@ namespace ULTIMATE_MIND.Controllers
                 usuario.Nome = userBanco.Nome;
                 usuario.ApelidoEmpresa = userBanco.IdempresaNavigation.Apelido;
                 usuario.NomeFantasiaEmpresa = userBanco.IdempresaNavigation.NomeFantasia;
-                usuario.GUID = userBanco.Guid;
                 new Util().AddClaim(this, Constantes.UsuarioLogado, JsonConvert.SerializeObject(usuario));
 
                 int listRetrno = 1;

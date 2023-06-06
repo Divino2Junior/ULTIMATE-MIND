@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frameworks/bootstrap_5.3/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/login/style.css">
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="~/css/jquery-confirm.css" />
+    <script src="/frameworks/jquery_3.7/jquery.js"></script>
+    <script src="/frameworks/jquery_3.7/jquery.mask.min.js"></script>
+    <script type="text/javascript" src="/JsPagina/Login/Login.js"></script>
+    <script type="text/javascript" src="~/js/site.js"></script>
+    <script type="text/javascript" src="~/js/jquery-confirm.js"></script>
+
+    <title>Amig Instalações</title>
+
+</head>
+<body>
+    <section>
+        @using (Html.BeginForm("Logar", "Login", FormMethod.Post,
+        new { encType = "multipart/form-data", id = "frmLogin", name = "frmLogin" }))
+        {
+            <div class="form-box">
+                <div class="form-value">
+                    <h2>Acesso</h2>
+
+                    <div id="error-message" class="erroCpf" style="display: none;"></div>
+
+                    <div class="mb-3">
+                        <input type="text" class="form-control" maxlength="14" id="txtcpf" autocomplete="off" name="Cpf" required title="CPF obrigatório">
+                        <span></span>
+                        <label for="" class="form-label">CPF</label>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="txtsenha" name="Senha" class="form-control" required>
+                        <span></span>
+                        <label class="form-label">Senha</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="return validarEntrada();" id="idbtn-login">Entrar</button>
+                </div>
+            </div>
+        }
+    </section>
+
+    <div class="footerVersao">
+        <label>Versão: @ViewBag.Versao</label>
+    </div>
+    <div class="footerDireitosAutorais">
+        <span>&copy; 2023 Ultimate Mind. Todos os direitos reservados. <a href="Home/Privacy">Política de Privacidade</a></span>
+    </div>
+
+    <script>
+        urlSite = "@ViewBag.UrlSite";
+    </script>
+
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+</body>
+</html>
+
+
+

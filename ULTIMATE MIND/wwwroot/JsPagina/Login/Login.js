@@ -1,21 +1,31 @@
 ﻿var urlSite;
 
-$("#txtCPF").mask("999.999.999-99");
+$(document).ready(function () {
+    $('#txtcpf').mask('000.000.000-00');
+    $("#txtcpf").on("input", function () {
+        ocultarMensagemErro();
+    });
+
+    $("#frmLogin").on("submit", function (event) {
+        event.preventDefault();
+        PostForm(this, loginSucesso)
+    });
+});
 
 function loginSucesso(data) {
     if (data <= 1)
         window.location = urlSite + "Home/"
 }
 
-$("#frmLogin").on("submit", function (event) {
-    event.preventDefault();
-    PostForm(this, loginSucesso)
-});
-
 function validarEntrada() {
-    if (!isCPFValido($("#txtCPF").val())) {
-        Alerta("CPF Inválido!");
+    if (!isCPFValido($("#txtcpf").val())) {
+        var errorMessage = "CPF Inválido!";
+        $("#error-message").text(errorMessage).show();
         return false;
     }
     return true;
+}
+
+function ocultarMensagemErro() {
+    $("#error-message").hide();
 }

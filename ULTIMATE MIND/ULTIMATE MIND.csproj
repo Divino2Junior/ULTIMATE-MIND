@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Login\" />
+    <Folder Include="wwwroot\frameworks\datadable\" />
   </ItemGroup>
 
 </Project>

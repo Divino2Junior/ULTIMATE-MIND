@@ -1,10 +1,15 @@
 ﻿var urlSite;
 
+
+$(document).ready(function () {
+    ocultarLoading();
+});
+
 function Alerta(pMsg) {
     $.alerta(pMsg, {
         title: 'Atenção',
         autoClose: true,
-        closeTime: 10000,
+        closeTime: 1000000,
         type: 'warning'
     });
 }
@@ -36,18 +41,18 @@ function Post(metodo, pSucesso, pErro) {
 
     var end = urlSite + metodo;
 
-    MostrarLoading();
+    mostrarLoading();
 
     $.ajax({
         type: "POST",
         url: end,
         data: "",
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (pErro != null && pErro != undefined)
                 pErro(request?.responseJSON?.message);
             else
@@ -60,7 +65,7 @@ function PostJSON(metodo, pSucesso, pErro) {
 
     var end = urlSite + metodo;
 
-    MostrarLoading();
+    mostrarLoading();
 
     $.ajax({
         type: "POST",
@@ -69,11 +74,11 @@ function PostJSON(metodo, pSucesso, pErro) {
         dataType: "json",
         data: "",
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (pErro != null && pErro != undefined)
                 pErro(request?.responseJSON?.message);
             else
@@ -103,7 +108,7 @@ function PostDadosSemLoading(metodo, dados, pSucesso, pErro) {
 }
 
 function PostForm(pForm, pSucesso, pErro) {
-    MostrarLoading();
+    mostrarLoading();
     var url = $(pForm).attr("action");
     var formData = $(pForm).serialize();
     $.ajax({
@@ -111,11 +116,11 @@ function PostForm(pForm, pSucesso, pErro) {
         type: "POST",
         data: formData,
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (pErro != null && pErro != undefined)
                 pErro(request?.responseJSON?.message);
             else
@@ -127,17 +132,17 @@ function PostForm(pForm, pSucesso, pErro) {
 function PostDados(metodo, dados, pSucesso, pErro) {
 
     var end = urlSite + metodo;
-    MostrarLoading();
+    mostrarLoading();
     $.ajax({
         url: end,
         type: 'POST',
         data: dados,
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (pErro != null && pErro != undefined)
                 pErro(request?.responseJSON?.message);
             else
@@ -149,7 +154,7 @@ function PostDados(metodo, dados, pSucesso, pErro) {
 function PostDadosJSON(metodo, dados, pSucesso, pErro) {
 
     var end = urlSite + metodo;
-    MostrarLoading();
+    mostrarLoading();
     $.ajax({
         url: end,
         type: 'POST',
@@ -157,11 +162,11 @@ function PostDadosJSON(metodo, dados, pSucesso, pErro) {
         dataType: "json",
         data: dados,
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (pErro != null && pErro != undefined)
                 pErro(request?.responseJSON?.message);
             else
@@ -171,7 +176,7 @@ function PostDadosJSON(metodo, dados, pSucesso, pErro) {
 }
 
 function PostFormUpload(pForm, idUpload, dados, pSucesso, pErro) {
-    MostrarLoading();
+    mostrarLoading();
     var url = $(pForm).attr("action");
     //var formData = $(pForm).serialize();
     var data = new FormData();
@@ -195,11 +200,11 @@ function PostFormUpload(pForm, idUpload, dados, pSucesso, pErro) {
         contentType: false,
         processData: false,
         success: function (sesponseTest) {
-            OcultarLoading();
+            ocultarLoading();
             pSucesso(sesponseTest);
         },
         error: function (request, message, error) {
-            OcultarLoading();
+            ocultarLoading();
             if (request != null &&
                 request != undefined &&
                 request.responseJSON != null &&
@@ -353,4 +358,12 @@ function exportToCsv(arquivoNome, header, linhas, separador) {
             document.body.removeChild(link);
         }
     }
+}
+
+function mostrarLoading() {
+    $("#loading-overlay").fadeIn();
+}
+
+function ocultarLoading() {
+    $("#loading-overlay").fadeOut();
 }
