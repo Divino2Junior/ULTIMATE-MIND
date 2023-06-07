@@ -215,13 +215,5 @@ h2{
     color: aliceblue;
     padding-right: 20px;
 }
-.footerDireitosAutorais {
-    display: block;
-    position: fixed;
-    bottom: 0;
-    text-align: center;
-    width: 100%;
-    color: aliceblue;
-    padding-right: 20px;
-}
+
 
