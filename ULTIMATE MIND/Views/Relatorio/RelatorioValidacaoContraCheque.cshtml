@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Relatório Contra Cheque";
+}
+
+<script src="/frameworks/datatable/datatables.min.js"></script>
+<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+
+<div class="box padding-10">
+    <div class="box-body">
+        <div class="card">
+            <div class="card-header filtroPrimary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="true" aria-hidden="false" aria-controls="collapseExample">
+                <h4 class="card-title">Filtros - Relatório de Contra Cheque</h4>
+            </div>
+            <div class="collapse show" id="collapseExample" aria-expanded="true">
+                <div class="card-body">
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-12" style="padding: 0;">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="mesAno" class="form-label">Mês/Ano:</label>
+                                        <input type="month" class="form-control" id="txtMesAnoInicio" placeholder="Mês/Ano">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="mesAno" class="form-label">Mês/Ano:</label>
+                                        <input type="month" class="form-control" id="txtMesAnoFim" placeholder="Mês/Ano">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="selectColaborador" class="form-label">Selecione um Colaborador:</label>
+                                        <select class="form-control" id="selectColaborador"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group" style=" padding-top:30px;">
+                                        <button class="btn btn-success" type="submit" id="btnBuscarDados">
+                                            <span class="bi bi-search"></span> Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" style="padding-top:20px;">
+            <table id="tabelaRelatorioAtendimento" border="1" class="table table-striped table-bordered nowrap" data-paging="false" data-info="false" style="table-layout:fixed;">
+                <thead>
+                    <tr>
+                        <th>
+                            Matrícula
+                        </th>
+                        <th>
+                            Cargo
+                        </th>
+                        <th>
+                            Colaborador
+                        </th>
+                        <th>
+                            Referência
+                        </th>
+                        <th>
+                            Validado?
+                        </th>
+                        <th>
+                            Ação
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -73,3 +73,13 @@ html {
     width: 100%;
     padding-right: 20px;
 }
+
+.padding-10 {
+    padding: 10px;
+}
+
+.filtroPrimary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
