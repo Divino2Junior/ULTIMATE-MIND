@@ -1,0 +1,59 @@
+﻿.cracha {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    background: linear-gradient(1deg, #0e0832, rgba(29, 19, 78, 0.6));
+}
+
+.foto {
+    margin-bottom: 10px;
+}
+
+.foto-usuario {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.informacoes p {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.matricula {
+    font-weight: bold;
+    font-size: 20px;
+    color: whitesmoke;
+}
+
+.nome {
+    font-size: 24px;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.cpf {
+    font-size: 18px;
+    color: whitesmoke;
+}
+
+.status {
+    font-weight: bold;
+    font-size: 20px;
+    color: whitesmoke;
+}
+
+.funcao {
+    font-style: italic;
+    font-size: 18px;
+    color: whitesmoke;
+}
+
+.email {
+    font-weight: bold;
+    font-size: 20px;
+    color: whitesmoke;
+}
+}

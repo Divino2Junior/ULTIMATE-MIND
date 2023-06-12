@@ -1,4 +1,26 @@
 ﻿@{
     Layout = "_Layout";
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Contra-Cheques";
 }
+
+<script src="/frameworks/datatable/datatables.min.js"></script>
+<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+
+<div class="box padding-10">
+    <div class="box-body">
+        <h1>Contracheques</h1>
+
+        <table id="tabelaContracheques" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Matrícula</th>
+                    <th>Nome</th>
+                    <th>Mês</th>
+                    <th>Ano</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

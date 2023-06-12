@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,50 @@ namespace ULTIMATE_MIND.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult CadastroContraCheque()
+        {
+            return View();
+        }
+
+        public IActionResult ContraCheque()
+        {
+            return View();
+        }
+
+        public object BuscarColaboradores()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                string q = HttpContext.Request.Query["q"].ToString();
+
+                int idEmpresa = GetIDEmpresaLogada();
+
+                if (string.IsNullOrEmpty(q))
+                {
+                    return context.Usuario.Select(r => new
+                    {
+                        r.Idusuario,
+                        Nome = r.Matricula + " - " + r.Nome
+                    });
+                }
+
+                var usuarios = context.Usuario.OrderBy(u => Convert.ToInt32(u.Matricula)).Select(r => new
+                {
+                    r.Idusuario,
+                    Nome = r.Matricula + " - " + r.Nome
+                }).ToList();
+
+                return usuarios.Where(u => u.Nome.Normalize().Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+
         }
 
         public object BuscarUsuarios()
@@ -81,7 +126,7 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         if (usuario.Nome != filtro.Nome)
                             usuario.Nome = filtro.Nome;
-                        if(usuario.Senha != filtro.Senha)
+                        if (usuario.Senha != filtro.Senha)
                             usuario.Senha = new Util().GetHashMD5(filtro.Senha.Substring(0, 4));
                         if (usuario.Matricula != filtro.Matricula.ToString())
                             usuario.Matricula = filtro.Matricula.ToString();
@@ -115,6 +160,36 @@ namespace ULTIMATE_MIND.Controllers
             {
                 return Erro(ex);
             }
+        }
+
+        public IActionResult InserirContraCheque(IFormFile arquivoPdf, string usuario, DateTime mesReferencia)
+        {
+            try
+            {
+                // Lógica para inserir o contra cheque no banco de dados ou fazer outras operações
+
+                // ...
+
+                // Dados atualizados do DataTable
+                var dataTableData = "teste"; // Implemente seu próprio método para obter os dados atualizados
+
+                // Mensagem de sucesso
+                var message = "Contra-Cheque inserido com sucesso.";
+
+                // Retorne os dados e a mensagem em um objeto JSON
+                var result = new { data = dataTableData, message = message };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Em caso de erro, retorne uma mensagem de erro
+                return BadRequest("Ocorreu um erro ao inserir o Contra-Cheque: " + ex.Message);
+            }
+        }
+
+        public object BuscarContraCheque()
+        {
+            return null;
         }
     }
 }

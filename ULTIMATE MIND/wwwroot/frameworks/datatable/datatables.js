@@ -12054,7 +12054,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sUrl": "",
+			"sUrl": "/frameworks/datatable/pt-Br.json",
 	
 	
 			/**

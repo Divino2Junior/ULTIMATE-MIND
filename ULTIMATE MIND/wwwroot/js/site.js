@@ -6,8 +6,9 @@ $(document).ready(function () {
 });
 
 function Alerta(pMsg) {
-    $.alerta(pMsg, {
-        title: 'Atenção',
+    $.alert({
+        title: 'Atenção!',
+        content: pMsg,
         autoClose: true,
         closeTime: 1000000,
         type: 'warning'
@@ -24,11 +25,16 @@ function Sucesso(pMsg) {
 
 function Erro(pMsg) {
     $.confirm({
-        columnClass: 'col-md-12',
+        columnClass: 'col-md-6 offset-md-3',
         title: 'Erro!',
         content: pMsg,
         type: 'red',
         typeAnimated: true,
+        boxWidth: '30%',
+        useBootstrap: false,
+        columnClass: 'col-md-6 offset-md-3',
+        containerFluid: false,
+        draggable: false,
         buttons: {
             sim: {
                 text: 'OK'
