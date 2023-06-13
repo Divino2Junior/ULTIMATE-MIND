@@ -24,10 +24,15 @@ a {
   border-color: #1861ac;
 }
 
+#navbar-menu {
+    background: linear-gradient(1deg, #20193efb, rgba(68, 42, 201, 0.552));
+}
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 @media (min-width: 768px) {
   html {
