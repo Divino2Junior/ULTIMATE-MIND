@@ -48,6 +48,29 @@ namespace ULTIMATE_MIND.Arquitetura.Util
                 return local;
             }
         }
+
+        public string CaminhoFotoPerfil
+        {
+            get
+            {
+                var local = HostingEnvironment.WebRootPath + "/FotoPerfil/";
+                if (!Directory.Exists(local))
+                    Directory.CreateDirectory(local);
+
+                return local;
+            }
+        }
+        public string CaminhoContraCheque
+        {
+            get
+            {
+                var local = HostingEnvironment.WebRootPath + "/ContraCheques/";
+                if (!Directory.Exists(local))
+                    Directory.CreateDirectory(local);
+
+                return local;
+            }
+        }
         public IActionResult Erro(Exception e)
         {
             Response.StatusCode = 300;

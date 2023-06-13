@@ -11,6 +11,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             Configuracao = new HashSet<Configuracao>();
             GrupoPermissao = new HashSet<GrupoPermissao>();
             Usuario = new HashSet<Usuario>();
+            ValidacaoContraCheque = new HashSet<ValidacaoContraCheque>();
         }
 
         public int Idempresa { get; set; }
@@ -28,5 +29,6 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual ICollection<Configuracao> Configuracao { get; set; }
         public virtual ICollection<GrupoPermissao> GrupoPermissao { get; set; }
         public virtual ICollection<Usuario> Usuario { get; set; }
+        public virtual ICollection<ValidacaoContraCheque> ValidacaoContraCheque { get; set; }
     }
 }

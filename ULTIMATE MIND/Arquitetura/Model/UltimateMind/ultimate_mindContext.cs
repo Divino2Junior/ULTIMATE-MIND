@@ -245,6 +245,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.DataAdmissao).HasColumnType("date");
 
+                entity.Property(e => e.DataDemissao).HasColumnType("date");
+
                 entity.Property(e => e.DataNascimento).HasColumnType("date");
 
                 entity.Property(e => e.Email).IsUnicode(false);
@@ -264,6 +266,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(false);
+
+                entity.Property(e => e.NomeFoto).HasColumnType("text");
 
                 entity.Property(e => e.Rg)
                     .HasColumnName("RG")
@@ -303,16 +307,25 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.IdvalidacaoContraCheque).HasColumnName("IDValidacaoContraCheque");
 
+                entity.Property(e => e.DataAssinado).HasColumnType("datetime");
+
+                entity.Property(e => e.DataInserido).HasColumnType("datetime");
+
+                entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
+
                 entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
 
                 entity.Property(e => e.NomeArquivo)
                     .IsRequired()
                     .HasColumnType("text");
 
-                entity.Property(e => e.Referencia)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                entity.Property(e => e.Referencia).HasColumnType("date");
+
+                entity.HasOne(d => d.IdempresaNavigation)
+                    .WithMany(p => p.ValidacaoContraCheque)
+                    .HasForeignKey(d => d.Idempresa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ValidacaoContraCheque_Empresa");
 
                 entity.HasOne(d => d.IdusuarioNavigation)
                     .WithMany(p => p.ValidacaoContraCheque)

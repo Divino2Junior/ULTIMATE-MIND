@@ -26,6 +26,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public int IdgrupoPermissao { get; set; }
         public string Senha { get; set; }
         public DateTime? DataAdmissao { get; set; }
+        public DateTime? DataDemissao { get; set; }
+        public string NomeFoto { get; set; }
 
         public virtual Cargo IdcargoNavigation { get; set; }
         public virtual Empresa IdempresaNavigation { get; set; }

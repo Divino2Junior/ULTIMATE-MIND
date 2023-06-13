@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace ULTIMATE_MIND.Arquitetura
+namespace ULTIMATE_MIND.Arquitetura.Enum
 {
     public class EnumStatusUsuario
     {
         private static List<EnumStatusUsuario> listaInterna = new List<EnumStatusUsuario>();
-
-        public static EnumStatusUsuario Inativo = new EnumStatusUsuario(0, "Inativo");
+        
         public static EnumStatusUsuario Ativo = new EnumStatusUsuario(1, "Ativo");
         public static EnumStatusUsuario Ferias = new EnumStatusUsuario(2, "Férias");
+        public static EnumStatusUsuario Inativo = new EnumStatusUsuario(3, "Inativo");
 
         public EnumStatusUsuario()
         {
@@ -37,11 +37,11 @@ namespace ULTIMATE_MIND.Arquitetura
             return listaInterna;
         }
 
-        public static EnumStatusUsuario Obtenha(int codigo)
+        public static string Obtenha(int codigo)
         {
             foreach (EnumStatusUsuario item in listaInterna)
             {
-                if (item.ID == codigo) return item;
+                if (item.ID == codigo) return item.Nome;
             }
             return null;
         }
@@ -53,12 +53,12 @@ namespace ULTIMATE_MIND.Arquitetura
 
         public override int GetHashCode()
         {
-            return this.ID.GetHashCode();
+            return ID.GetHashCode();
         }
 
         public override string ToString()
         {
-            return this.Nome.ToString();
+            return Nome.ToString();
         }
     }
 }

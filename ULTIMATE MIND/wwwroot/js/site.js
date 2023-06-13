@@ -35,6 +35,8 @@ function Erro(pMsg) {
         columnClass: 'col-md-6 offset-md-3',
         containerFluid: false,
         draggable: false,
+        autoClose: true,
+        closeTime: 1000000,
         buttons: {
             sim: {
                 text: 'OK'
@@ -372,4 +374,12 @@ function mostrarLoading() {
 
 function ocultarLoading() {
     $("#loading-overlay").fadeOut();
+}
+
+function logout() {
+    Post("Login/Logout", logoutResult);
+}
+
+function logoutResult() {
+    window.location = "/Login/";
 }

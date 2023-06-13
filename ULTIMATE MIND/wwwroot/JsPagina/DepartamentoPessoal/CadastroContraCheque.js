@@ -82,9 +82,7 @@ $(document).ready(function () {
                 $("#selectUsuario").val(null).trigger('change');
                 $('#mesReferencia').val('');
                 $('#arquivoPdf').val('');
-
-                // Atualizar o DataTable com os dados atualizados
-                $('#seuDataTable').DataTable().clear().rows.add(response.data).draw();
+                Post('DepartamentoPessoal/BuscarContraCheque', montarTela, Erro);
             },
             error: function (xhr, status, error) {
                 // Exibir mensagem de erro em caso de falha na requisição

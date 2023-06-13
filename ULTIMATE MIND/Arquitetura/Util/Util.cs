@@ -6,6 +6,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using Microsoft.AspNetCore.Authentication;
+using System.Text.RegularExpressions;
 
 namespace ULTIMATE_MIND.Arquitetura.Util
 {
@@ -98,6 +99,72 @@ namespace ULTIMATE_MIND.Arquitetura.Util
                 Constantes.CookieUser,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
+        }
+
+        public string FormataCPF(string s)
+        {
+            if (s.Trim() != "")
+            {
+                if (s.Length > 11)
+                {
+                    s = s.Substring(s.Length - 11);
+                }
+                return string.Format(@"{0:000\.000\.000\-00}", long.Parse(s));
+            }
+            else
+                return "";
+        }
+
+        public string FormataCNPJ(string s)
+        {
+            if (s.Trim() != "")
+            {
+                return string.Format(@"{0:00\.000\.000\/0000\-00}", long.Parse(s));
+            }
+            else
+                return "";
+        }
+
+        public string FormataTelefone(string s)
+        {
+            if (s.Trim() != "")
+            {
+                if (s.Length > 10)
+                {
+                    s = s.Substring(s.Length - 10);
+                }
+                return string.Format(@"({0:##}) {1:####-####}", long.Parse(s.Substring(0, 2)), long.Parse(s.Substring(2)));
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public string RemoveFormatacaoCPF(string s)
+        {
+            // Remove todos os caracteres não numéricos do CPF
+            string cpfApenasNumeros = Regex.Replace(s, @"\D", "");
+
+            // Verifica se o CPF possui 11 dígitos
+            if (cpfApenasNumeros.Length == 11)
+            {
+                return cpfApenasNumeros;
+            }
+            else
+            {
+                // Retorne uma string vazia ou gere uma exceção, dependendo do que for mais adequado para o seu caso
+                return "";
+            }
+        }
+
+        public string RemoveFormatacaoTelefone(string s)
+        {
+            // Remove todos os caracteres não numéricos do telefone
+            string telefoneApenasNumeros = Regex.Replace(s, @"\D", "");
+
+            // Retorna o telefone sem formatação
+            return telefoneApenasNumeros;
         }
 
     }

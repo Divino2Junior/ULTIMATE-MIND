@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using ULTIMATE_MIND.Arquitetura;
 using ULTIMATE_MIND.Arquitetura.DTO;
+using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
 using ULTIMATE_MIND.Arquitetura.Util;
 
@@ -24,7 +25,7 @@ namespace ULTIMATE_MIND.Controllers
             try
             {
                 var context = new ultimate_mindContext();
-                string bCpf = new Util().ToCpf(usuario.Cpf);
+                string bCpf = new Util().RemoveFormatacaoCPF(usuario.Cpf);
 
                 var userBanco = context.Usuario
                     .Include(r => r.IdempresaNavigation)
@@ -76,5 +77,38 @@ namespace ULTIMATE_MIND.Controllers
                 return this.Erro(e.Message);
             }
         }
-    }    
+
+        public List<Tela> ObterPermissoesDoUsuario(int userId)
+        {
+            using (var dbContext = new ultimate_mindContext()) // Substitua "SeuDbContext" pelo nome da sua classe de contexto de banco de dados
+            {
+                // Obter o grupo de permissões do usuário
+                var grupoPermissao = dbContext.Usuario
+                    .Include(u => u.IdgrupoPermissaoNavigation)
+                    .Where(u => u.Idusuario == userId)
+                    .Select(u => u.IdgrupoPermissaoNavigation)
+                    .FirstOrDefault();
+
+                if (grupoPermissao != null)
+                {
+                    // Obter as telas associadas ao grupo de permissões
+                    var permissoes = dbContext.Tela
+                        .Where(t => t.IdgrupoPermissao == grupoPermissao.IdgrupoPermissao)
+                        .ToList();
+
+                    return permissoes;
+                }
+
+                return new List<Tela>(); // Retornar uma lista vazia caso o usuário não tenha um grupo de permissões associado
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync();
+
+            return Ok();
+        }
+    }
 }

@@ -1,10 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using ULTIMATE_MIND.Arquitetura;
+using ULTIMATE_MIND.Arquitetura.DTO;
+using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Filtros;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
 using ULTIMATE_MIND.Arquitetura.Util;
@@ -162,23 +167,54 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
-        public IActionResult InserirContraCheque(IFormFile arquivoPdf, string usuario, DateTime mesReferencia)
+        public IActionResult InserirContraCheque(IFormFile arquivoPdf, int usuario, DateTime mesReferencia)
         {
             try
             {
-                // Lógica para inserir o contra cheque no banco de dados ou fazer outras operações
 
-                // ...
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+                if (arquivoPdf != null && arquivoPdf.Length > 0)
+                {
+                    var validacaoContraCheque = context.ValidacaoContraCheque
+                        .Where(r => r.Idusuario == usuario && r.Referencia == mesReferencia).FirstOrDefault();
 
-                // Dados atualizados do DataTable
-                var dataTableData = "teste"; // Implemente seu próprio método para obter os dados atualizados
+                    if (validacaoContraCheque == null)
+                    {
+                        // Monta o nome do arquivo usando as informações do usuário e referência do mês
+                        var nomeArquivo = $"ContraCheque_{usuario}_{mesReferencia.ToString("dd_MM_yyyy")}.pdf";
 
-                // Mensagem de sucesso
-                var message = "Contra-Cheque inserido com sucesso.";
+                        // Monta o caminho completo do arquivo PDF
+                        var caminhoCompleto = this.CaminhoContraCheque + nomeArquivo;
 
-                // Retorne os dados e a mensagem em um objeto JSON
-                var result = new { data = dataTableData, message = message };
-                return Ok(result);
+                        // Salva o arquivo PDF no caminho especificado
+                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                        {
+                            arquivoPdf.CopyTo(stream);
+                        }
+
+                        var contraCheque = new ValidacaoContraCheque();
+                        contraCheque.Idusuario = usuario;
+                        contraCheque.DataInserido = DateTime.Now;
+                        contraCheque.Referencia = mesReferencia;
+                        contraCheque.NomeArquivo = nomeArquivo;
+                        contraCheque.Idempresa = idEmpresa;
+
+
+                        context.ValidacaoContraCheque.Add(contraCheque);
+                        context.SaveChanges();
+                    }
+
+                    else
+                        return Erro("Contra Cheque já cadastrado!!!");
+
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Nenhum arquivo PDF foi enviado.");
+                }
             }
             catch (Exception ex)
             {
@@ -187,9 +223,50 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
+
         public object BuscarContraCheque()
         {
-            return null;
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+
+                var contrasCheques = context.ValidacaoContraCheque
+                    .Include(r => r.IdusuarioNavigation)
+                    .Where(r => r.Idempresa == idEmpresa).ToList();
+
+                var retorno = new List<ContraChequeDTO>();
+
+                foreach (var item in  contrasCheques)
+                {
+
+                    string mesFormatado = item.Referencia.ToString("MMMM", new CultureInfo("pt-BR"));
+                    string anoFormatado = item.Referencia.ToString("yyyy");
+
+                    //// Formata o mês abreviado
+                    //string mesAbreviado = mesReferencia.ToString("MMM", new CultureInfo("pt-BR"));
+
+                    string dataFormatada = $"{mesFormatado}/{anoFormatado}";
+
+                    var contraCheque = new ContraChequeDTO();
+                    contraCheque.Matricula = item.IdusuarioNavigation.Matricula;
+                    contraCheque.IdContraCheque = item.IdvalidacaoContraCheque;
+                    contraCheque.NomeColaborador = item.IdusuarioNavigation.Nome;
+                    contraCheque.Referencia = dataFormatada;
+                    contraCheque.IsAssinado = item.IsAssinado;
+                    retorno.Add(contraCheque);
+                }
+
+
+                if (retorno.Count > 0)
+                    return retorno;
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
         }
     }
 }
