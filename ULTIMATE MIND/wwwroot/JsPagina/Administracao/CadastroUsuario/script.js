@@ -6,6 +6,20 @@ $(document).ready(function () {
 
     $("#m-telefone").mask("(99) 99999-9999");
 
+
+    $('#m-imagem-input').on('change', function (e) {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+             $('#m-imagem-preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+
+
+
     $('#selectFuncao').select2({
         dropdownParent: $('#modalCadastroCliente'),
         width: 'resolve',
