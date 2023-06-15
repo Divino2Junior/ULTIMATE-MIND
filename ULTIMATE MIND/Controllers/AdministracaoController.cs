@@ -20,6 +20,10 @@ namespace ULTIMATE_MIND.Controllers
         {
             return View();
         }
+        public IActionResult Empresa()
+        {
+            return View();
+        }
 
         public object BuscarUsuarios()
         {
@@ -263,6 +267,35 @@ namespace ULTIMATE_MIND.Controllers
 
             return cargos.Where(u => u.Nome.Normalize().Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
 
+        }
+
+        public object ConsultarEmpresas()
+        {
+            var context = new ultimate_mindContext();
+            try
+            {
+                var empresas = context.Empresa.Where(r => r.Status == EnumStatusEmpresa.Ativo.ID)
+                    .Select(r=> new 
+                    {
+                        r.Idempresa,
+                        r.RazaoSocial,
+                        r.NomeFantasia,
+                        r.Apelido,
+                        Cnpj = r.Cnpj == null ? "" : new Util().FormataCNPJ(r.Cnpj),
+                        StatusNome = EnumStatusEmpresa.Obtenha(r.Status),
+                        r.Status,
+                        r.Endereco,
+                        r.Latitude, 
+                        r.Longitude,
+                        Telefone = r.Telefone == null ? "" : new Util().FormataTelefone(r.Telefone),
+                    }).ToList();
+
+                return empresas;
+            }
+            catch(Exception ex)
+            {
+                return Erro(ex);
+            }
         }
     }
 }

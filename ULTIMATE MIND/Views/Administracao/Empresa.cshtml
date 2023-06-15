@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Empresas";
+}
+
+<script src="/frameworks/datatable/datatables.min.js"></script>
+<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+<script type="text/javascript" src="/JsPagina/Administracao/Empresa/empresa.js"></script>
+
+
+
+<div class="container">
+    <h1 style="padding-top: 40px;padding-bottom: 40px;">
+        Empresas
+    </h1>
+    <table class="table" id="tableEmpresa">
+        <thead>
+            <tr class="titulo">
+                <th>IDEmpresa</th>
+                <th>Apelido</th>
+                <th>Razão Social</th>
+                <th>Nome Fantasia</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="empresaTableBody">
+            <!-- Aqui serão adicionadas as linhas da tabela com os dados das empresas -->
+        </tbody>
+    </table>
+
+</div>

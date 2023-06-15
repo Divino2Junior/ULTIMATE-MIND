@@ -1,0 +1,145 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Cadastro de Clientes";
+}
+
+<script src="/frameworks/datatable/datatables.min.js"></script>
+<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+<script type="text/javascript" src="/JsPagina/Administracao/Cliente/CadastroCliente.js"></script>
+<link rel="stylesheet" href="/css/cadastroUsuario/style.css">
+
+
+
+<div class="table-bordered">
+    <h1 class="text-centerador">Clientes</h1>
+    <br>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="novoCliente();" id="novo">
+            Adicionar
+        </button>
+    </div>
+
+    <table id="tableCliente" class="table table-responsive">
+        <thead>
+            <tr class="titulo">
+                <th>Código</th>
+                <th>Apelido</th>
+                <th>CPF/CNPJ</th>
+                <th>Status</th>
+                <th>Telefone</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        </tbody>
+    </table>
+</div>
+
+<div class="modal" id="modalCadastroCliente">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Adicionar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="text-center mb-3">
+                        <label for="m-imagem" class="col-form-label">Insira o QrCode abaixo</label>
+                        <div class="image-upload">
+                            <label for="m-imagem-input" class="imagem-input">
+                                <img src="/icons/homem-usuario.png" id="m-imagem-preview" class="rounded-circle">
+                                <span class="upload-icon"><i class="bi bi-camera-fill"></i></span>
+                            </label>
+                            <input hidden type="file" id="m-imagem-input" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtNomeCliente" class="col-form-label">Nome</label>
+                                <input type="text" maxlength="20" class="form-control" id="txtNomeCliente" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtCpf" class="col-form-label">CPF</label>
+                                <input type="text" class="form-control" id="txtCpf" maxlength="14" />
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtCnpj" class="col-form-label">CNPJ</label>
+                                <input type="text" class="form-control" id="txtCnpj" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtTelefone" class="col-form-label">Telefone</label>
+                                <input type="text" class="form-control" id="txtTelefone" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="m-email" class="col-form-label">E-mail</label>
+                                <input type="email" class="form-control" id="m-email" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="selectStatus" class="col-form-label">Status</label>
+                                <select class="js-example-responsive" style="width: 100%" id="selectStatus">
+                                    <option value="1">Ativo</option>
+                                    <option value="0">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtLatitude" class="col-form-label">Latitude</label>
+                                <input type="text" class="form-control" id="txtLatitude" />
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtLongitude" class="col-form-label">Longitude</label>
+                                <input type="text" class="form-control" id="txtLongitude" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-6">
+                                <label for="txtEndereco" class="col-form-label">Endereço</label>
+                                <input type="text" class="form-control" id="txtEndereco" />
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" id="btn-salvar" onclick="salvarCliente();">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
