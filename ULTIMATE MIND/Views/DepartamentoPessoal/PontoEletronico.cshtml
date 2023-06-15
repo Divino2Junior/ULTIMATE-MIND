@@ -2,3 +2,122 @@
     Layout = "_Layout";
     ViewData["Title"] = "Home Page";
 }
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #00008B;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        margin-top: 50px;
+        width: 100%;
+    }
+
+    .row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .button {
+        flex: 1;
+        margin: 10px;
+        padding: 18px;
+        background-color: #00008B;
+        color: #fff;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .time {
+        flex: 1;
+        text-align: center;
+        padding: 3px;
+        color: #00008B;
+    }
+
+    .jornada {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .jornada-title {
+        font-size: 16px;
+    }
+
+    .jornada-time {
+        padding: 8px 16px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .historico-button {
+        flex: 1;
+        background-color: #FF4500;
+        padding: 18px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        text-align: center;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container">
+    <div class="title">Data:</div>
+    <table class="table">
+        <tr class="row">
+            <td>
+                <button class="button">Início do Dia</button>
+            </td>
+            <td class="time">00:00</td>
+        </tr>
+        <tr class="row">
+            <td>
+                <button class="button">Início do Almoço</button>
+            </td>
+            <td class="time">00:00</td>
+        </tr>
+        <tr class="row">
+            <td>
+                <button class="button">Fim do Almoço</button>
+            </td>
+            <td class="time">00:00</td>
+        </tr>
+        <tr class="row">
+            <td>
+                <button class="button">Fim do Dia</button>
+            </td>
+            <td class="time">00:00</td>
+        </tr>
+    </table>
+    <div class="jornada">
+        <div class="jornada-title">Jornada:</div>
+        <div class="jornada-time">00:00</div>
+    </div>
+    <div class="row">
+        <button class="historico-button">Histórico</button>
+    </div>
+</div>

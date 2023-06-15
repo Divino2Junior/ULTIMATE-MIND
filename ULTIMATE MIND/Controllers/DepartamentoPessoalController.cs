@@ -33,6 +33,11 @@ namespace ULTIMATE_MIND.Controllers
             return View();
         }
 
+        public IActionResult PontoEletronico()
+        {
+            return View();
+        }
+
         public object BuscarColaboradores()
         {
             try
