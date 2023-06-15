@@ -31,7 +31,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar-menu">
         <div class="container-fluid">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">ULTIMATE MIND</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler ms-auto hamburger-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -39,9 +39,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    <li class="nav-item">
+
+@*                    <li class="nav-item">
                         <a class="nav-link" href="#" id="menu-cracha">Crachá Digital</a>
-                    </li>
+                    </li>*@
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-adm" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administração</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-adm">
@@ -51,36 +53,40 @@
                             <li><a class="dropdown-item" href="#" id="menu-dropConfig">Configuração</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-dptPessoal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Departamento Pessoal</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-dptPessoal">
-                            <li><a class="dropdown-item" href="#" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropContraCheque">Contra Cheque</a></li>
-                            <li class="dropdown">
-                                <a class="dropdown-item dropdown-toggle" href="#" id="menu-dropRelatorios" role="button" data-bs-toggle="dropdown" aria-expanded="false">Relatórios</a>
-                                <ul class="dropdown-menu" aria-labelledby="menu-dropRelatorios">
-                                    <li><a class="dropdown-item" href="#" id="">Ponto Eletrônico</a></li>
-                                    <li><a class="dropdown-item" href="#" id="">Contra Cheque</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+
                     <!-- Novas opções: Cliente -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-cliente" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cliente</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-cliente">
                             <li><a class="dropdown-item" href="#" id="menu-qrCode">QrCode</a></li>
                             <li><a class="dropdown-item" href="#" id="menu-cadastro">Cadastro</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-atendimento">Atendimento</a></li>
                         </ul>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menu-dptPessoal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Departamento Pessoal</a>
+                        <ul class="dropdown-menu" aria-labelledby="menu-dptPessoal">
+                            <li><a class="dropdown-item" href="#" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-dropContraCheque">Contra Cheque</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-dropCadastroContraCheque">Cadastro do contra cheque </a></li>
+                        </ul>
+                    </li>
+
+
                     <!-- Novas opções: Atendimento -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-atendimento" role="button" data-bs-toggle="dropdown" aria-expanded="false">Atendimento</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-atendimento">
-                            <li><a class="dropdown-item" href="#" id="menu-inicio">Atendimento</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-relatorioAtendimento">Relatório</a></li>
+                        <a class="nav-link dropdown-toggle" href="#" id="menu-relatorios" role="button" data-bs-toggle="dropdown" aria-expanded="false">Relatórios</a>
+                        <ul class="dropdown-menu" aria-labelledby="menu-relatorios">
+                            <li><a class="dropdown-item" href="#" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-dropContraCheque">Contra Cheque</a></li>
                         </ul>
                     </li>
+
+					<li class="nav-item">
+                        <a class="nav-link" href="#" id="sair-btn" onclick="logout();">Sair</a>
+					</li>
+
                 </ul>
             </div>
         </div>
