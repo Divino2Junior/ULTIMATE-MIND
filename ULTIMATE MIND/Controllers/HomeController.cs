@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,11 +19,11 @@ namespace ULTIMATE_MIND.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHostingEnvironment hostingEnvironment)
         {
             _logger = logger;
+            HostingEnvironment = hostingEnvironment;
         }
-
         public IActionResult Index()
         {
             return View();

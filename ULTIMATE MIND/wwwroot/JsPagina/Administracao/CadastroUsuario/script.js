@@ -1,4 +1,5 @@
 var idUsuario = 0;
+var imgUsuario;
 
 $(document).ready(function () {
 
@@ -10,9 +11,10 @@ $(document).ready(function () {
     $('#m-imagem-input').on('change', function (e) {
         var file = e.target.files[0];
         var reader = new FileReader();
-
-        reader.onload = function (e) {
-             $('#m-imagem-preview').attr('src', e.target.result);
+        imgUsuario = null;
+        reader.onload = function () {
+            imgUsuario = reader.result;
+            $('#m-imagem-preview').attr('src', reader.result);
         }
 
         reader.readAsDataURL(file);
@@ -82,7 +84,7 @@ $(document).ready(function () {
             }
         }
     });
-    
+
     const emailInput = $('#m-email');
 
     // Aplica a máscara do email
@@ -176,6 +178,13 @@ function montarModalUsuario(retorno) {
 
         var optionGrupoPermissao = new Option(retorno.nomeGrupoPermissao, retorno.idGrupoPermissao, true, true);
         $("#selectGrupoPermissao").append(optionGrupoPermissao).trigger('change');
+
+        if (retorno.imgUsuario) {
+            $('#m-imagem-preview').attr('src', 'data:image/jpeg;base64,' + retorno.imgUsuario);
+        } else {
+            // Se a foto não existe, exibir o ícone padrão
+            $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
+        }
     }
 
     $("#modalCadastroCliente").modal('show');
@@ -230,6 +239,7 @@ function salvarUsuario() {
     objet.DataAdmissao = $('#m-dataAdmissao').val();
     objet.DataDemissao = $('#m-dataDemissao').val();
     objet.IdGrupoPermissao = $("#selectGrupoPermissao").val();
+    objet.ImgUsuario = imgUsuario;
 
     PostDados("Administracao/SalvarUsuario", { dados: JSON.stringify(objet) }, SalvarUsuarioResult);
 }

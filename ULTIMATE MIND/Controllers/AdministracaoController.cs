@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using ULTIMATE_MIND.Arquitetura.Enum;
+using ULTIMATE_MIND.Arquitetura.Filtros;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
 using ULTIMATE_MIND.Arquitetura.Util;
 
@@ -12,11 +15,15 @@ namespace ULTIMATE_MIND.Controllers
 {
     public class AdministracaoController : ControllerPadrao
     {
+        public AdministracaoController(IHostingEnvironment hostingEnvironment)
+        {
+            HostingEnvironment = hostingEnvironment;
+        }
         public IActionResult CadastroUsuario()
         {
             return View();
         }
-        public IActionResult CadastroPermissao()
+        public IActionResult CadastroGrupoUsuario()
         {
             return View();
         }
@@ -30,7 +37,7 @@ namespace ULTIMATE_MIND.Controllers
             try
             {
                 var context = new ultimate_mindContext();
-                var empresa = 1;
+                var empresa = GetIDEmpresaLogada();
 
                 var usuarios = context.Usuario.Where(r => r.Idempresa == empresa && r.Status != EnumStatusUsuario.Inativo.ID)
                     .Include(r => r.IdcargoNavigation)
@@ -45,7 +52,7 @@ namespace ULTIMATE_MIND.Controllers
                     }).ToList();
 
                 if (usuarios.Count > 0)
-                    return usuarios.OrderBy(r=> r.Matricula).ToList();
+                    return usuarios.OrderBy(r => r.Matricula).ToList();
 
                 return null;
             }
@@ -61,8 +68,8 @@ namespace ULTIMATE_MIND.Controllers
             {
                 var context = new ultimate_mindContext();
                 var usuario = context.Usuario
-                    .Include(r=> r.IdcargoNavigation)
-                    .Include(r=> r.IdgrupoPermissaoNavigation)
+                    .Include(r => r.IdcargoNavigation)
+                    .Include(r => r.IdgrupoPermissaoNavigation)
                     .Where(r => r.Idusuario == id).FirstOrDefault();
 
                 if (usuario == null)
@@ -87,6 +94,15 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.IdGrupoPermissao = usuario.IdgrupoPermissao;
                 retorno.NomeGrupoPermissao = usuario.IdgrupoPermissaoNavigation.Nome;
 
+                var caminhoFoto = CaminhoFotoPerfil + $"{usuario.Idusuario}.jpg";
+
+                if (System.IO.File.Exists(caminhoFoto))
+                {
+                    var bytesFoto = System.IO.File.ReadAllBytes(caminhoFoto);
+                    var fotoBase64 = Convert.ToBase64String(bytesFoto);
+                    retorno.ImgUsuario = fotoBase64;
+                }
+
                 return retorno;
             }
             catch (Exception ex)
@@ -101,7 +117,7 @@ namespace ULTIMATE_MIND.Controllers
             {
                 var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<CadastroUsuarioDTO>(dados);
                 var context = new ultimate_mindContext();
-                var idEmpresa = 1;
+                var idEmpresa = GetIDEmpresaLogada();
 
                 if (obj.IdUsuario > 0)
                 {
@@ -172,12 +188,32 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.DataDemissao = DateTime.Parse(obj.DataDemissao);
                         isAlteracao = true;
                     }
-                    
-                    if(isAlteracao)
+                    if (!string.IsNullOrEmpty(obj.ImgUsuario))
+                    {
+                        var imagemBase64 = obj.ImgUsuario;
+                        var imageDataBytes = Convert.FromBase64String(imagemBase64);
+
+                        var nomeArquivo = $"{usuario.Idusuario}.jpg";
+                        var caminhoCompleto = this.CaminhoFotoPerfil + nomeArquivo;
+
+                        // Verificar se o arquivo já existe
+                        if (System.IO.File.Exists(caminhoCompleto))
+                        {
+                            // Excluir o arquivo existente
+                            System.IO.File.Delete(caminhoCompleto);
+                        }
+
+                        using (var imageFile = new FileStream(caminhoCompleto, FileMode.Create))
+                        {
+                            imageFile.Write(imageDataBytes, 0, imageDataBytes.Length);
+                            imageFile.Flush();
+                        }
+                    }
+
+                    if (isAlteracao)
                     {
                         context.Entry(usuario);
                     }
-
                 }
                 else
                 {
@@ -190,7 +226,7 @@ namespace ULTIMATE_MIND.Controllers
                     user.Cpf = new Util().RemoveFormatacaoCPF(obj.Cpf);
                     user.Idcargo = obj.IdCargo;
                     user.Email = obj.Email == null ? null : obj.Email;
-                    user.DataNascimento =  obj.DataNascimento == null ? null : DateTime.TryParse(obj.DataNascimento, out dataNascimento) ? (DateTime?)dataNascimento : null;
+                    user.DataNascimento = obj.DataNascimento == null ? null : DateTime.TryParse(obj.DataNascimento, out dataNascimento) ? (DateTime?)dataNascimento : null;
                     user.Status = obj.Status;
                     user.Telefone = obj.Telefone == null ? null : new Util().RemoveFormatacaoTelefone(obj.Telefone);
                     user.Rg = obj.Rg == null ? null : obj.Rg;
@@ -200,12 +236,32 @@ namespace ULTIMATE_MIND.Controllers
                     user.DataDemissao = obj.DataDemissao == null ? null : DateTime.TryParse(obj.DataDemissao, out dataNascimento) ? (DateTime?)dataNascimento : null;
 
                     context.Usuario.Add(user);
+                    context.SaveChanges();
+
+
+                    if (!string.IsNullOrEmpty(obj.ImgUsuario))
+                    {
+                        var imagemBase64 = obj.ImgUsuario;
+                        var imageDataBytes = Convert.FromBase64String(imagemBase64);
+
+                        var nomeArquivo = $"{user.Idusuario}.jpg";
+                        var caminhoCompleto = this.CaminhoFotoPerfil + nomeArquivo;
+
+                        // Verificar se o arquivo já existe
+                        if (System.IO.File.Exists(caminhoCompleto))
+                        {
+                            // Excluir o arquivo existente
+                            System.IO.File.Delete(caminhoCompleto);
+                        }
+
+                        using (var imageFile = new FileStream(caminhoCompleto, FileMode.Create))
+                        {
+                            imageFile.Write(imageDataBytes, 0, imageDataBytes.Length);
+                            imageFile.Flush();
+                        }
+                    }
                 }
-
-                context.SaveChanges();
-
                 return Ok();
-
             }
             catch (Exception ex)
             {
@@ -218,7 +274,7 @@ namespace ULTIMATE_MIND.Controllers
             var context = new ultimate_mindContext();
             string q = HttpContext.Request.Query["q"].ToString();
 
-            int idEmpresa = 1;
+            int idEmpresa = GetIDEmpresaLogada();
 
             if (string.IsNullOrEmpty(q))
             {
@@ -248,11 +304,11 @@ namespace ULTIMATE_MIND.Controllers
             var context = new ultimate_mindContext();
             string q = HttpContext.Request.Query["q"].ToString();
 
-            int idEmpresa = 1;
+            int idEmpresa = GetIDEmpresaLogada();
 
             if (string.IsNullOrEmpty(q))
             {
-                return context.GrupoPermissao.Where(r=> r.Idempresa == idEmpresa).Select(r => new
+                return context.GrupoPermissao.Where(r => r.Idempresa == idEmpresa).Select(r => new
                 {
                     r.IdgrupoPermissao,
                     Nome = r.Nome
@@ -275,7 +331,7 @@ namespace ULTIMATE_MIND.Controllers
             try
             {
                 var empresas = context.Empresa.Where(r => r.Status == EnumStatusEmpresa.Ativo.ID)
-                    .Select(r=> new 
+                    .Select(r => new
                     {
                         r.Idempresa,
                         r.RazaoSocial,
@@ -285,14 +341,158 @@ namespace ULTIMATE_MIND.Controllers
                         StatusNome = EnumStatusEmpresa.Obtenha(r.Status),
                         r.Status,
                         r.Endereco,
-                        r.Latitude, 
+                        r.Latitude,
                         r.Longitude,
                         Telefone = r.Telefone == null ? "" : new Util().FormataTelefone(r.Telefone),
                     }).ToList();
 
                 return empresas;
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object BuscarGrupoUsuarios()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idempresa = GetIDEmpresaLogada();
+
+                var gruposUsuario = context.GrupoPermissao.Where(r => r.Idempresa == idempresa)
+                    .Select(r => new
+                    {
+                        r.IdgrupoPermissao,
+                        r.Nome,
+                    }).ToList();
+
+                return gruposUsuario;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object BuscarInfoGrupoUsuario(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var lstTelas = context.Tela.Include(r => r.IdgrupoPermissaoNavigation)
+                    .Where(r => r.IdgrupoPermissao == id).ToList();
+
+                var retorno = new GrupoUsuarioDTO();
+
+                if (lstTelas.Count > 0)
+                {
+                    retorno.IdgrupoPermissao = lstTelas.Select(r => r.IdgrupoPermissao).FirstOrDefault();
+                    retorno.NomeGrupoUsuario = lstTelas.Select(r => r.IdgrupoPermissaoNavigation.Nome).FirstOrDefault();
+                    retorno.lstNomeTela = lstTelas.Select(r => r.NomeTela).ToList();
+
+                    return retorno;
+                }
+                else
+                {
+                    var grupoUsuario = context.GrupoPermissao.Where(r => r.IdgrupoPermissao == id).FirstOrDefault();
+                    retorno.IdgrupoPermissao = grupoUsuario.IdgrupoPermissao;
+                    retorno.NomeGrupoUsuario = grupoUsuario.Nome;
+                    return retorno;
+                }
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object SalvarPermissaoGrupoUsuario(string dados)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idempresa = GetIDEmpresaLogada();
+                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<FiltroSalvarGrupoUsuario>(dados);
+
+                if (obj.ListaTela.Count > 0)
+                {
+                    var grupoUser = context.GrupoPermissao.Where(r => r.IdgrupoPermissao == obj.IDGrupoPermissao).FirstOrDefault();
+                    if (grupoUser == null)
+                    {
+                        var grupoPermissao = new GrupoPermissao();
+                        grupoPermissao.Nome = obj.NomeGrupoUsuario;
+                        grupoPermissao.Idempresa = idempresa;
+
+                        context.GrupoPermissao.Add(grupoPermissao);
+                        context.SaveChanges();
+
+                        var lstTelas = new List<Tela>();
+
+                        foreach (var item in obj.ListaTela)
+                        {
+                            var tela = new Tela();
+                            tela.IdgrupoPermissao = grupoPermissao.IdgrupoPermissao;
+                            tela.NomeTela = item;
+                            lstTelas.Add(tela);
+                        }
+
+                        context.Tela.AddRange(lstTelas);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        if (grupoUser.Nome != obj.NomeGrupoUsuario)
+                        {
+                            grupoUser.Nome = obj.NomeGrupoUsuario;
+                            context.Entry(grupoUser);
+                            context.SaveChanges();
+                        }
+
+                        var gTelas = context.Tela.Where(r => r.IdgrupoPermissao == obj.IDGrupoPermissao).ToList();
+
+                        if (gTelas.Count > 0)
+                        {
+                            context.Tela.RemoveRange(gTelas);
+                            context.SaveChanges();
+
+                            var lstTelas = new List<Tela>();
+
+                            foreach (var item in obj.ListaTela)
+                            {
+                                var tela = new Tela();
+                                tela.IdgrupoPermissao = obj.IDGrupoPermissao;
+                                tela.NomeTela = item;
+                                lstTelas.Add(tela);
+                            }
+
+                            context.Tela.AddRange(lstTelas);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            var lstTelas = new List<Tela>();
+
+                            foreach (var item in obj.ListaTela)
+                            {
+                                var tela = new Tela();
+                                tela.IdgrupoPermissao = obj.IDGrupoPermissao;
+                                tela.NomeTela = item;
+                                lstTelas.Add(tela);
+                            }
+
+                            context.Tela.AddRange(lstTelas);
+                            context.SaveChanges();
+                        }
+
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
             {
                 return Erro(ex);
             }

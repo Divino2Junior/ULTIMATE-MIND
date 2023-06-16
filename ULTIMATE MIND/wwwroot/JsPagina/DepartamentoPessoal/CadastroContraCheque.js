@@ -113,8 +113,8 @@ function montarTela(retorno) {
         contraChequesTable.clear();
         $.each(retorno, function (index, item) {
             contraChequesTable.row.add([
-                item.nomeUsuario,
-                item.mesReferencia,
+                item.nomeColaborador,
+                item.referencia,
                 "<img class='imgAcao' onclick='excluirUsuario(" + item.idContraCheque + ")' src='../../images/delete-24.png'></img>"
             ]);
         });

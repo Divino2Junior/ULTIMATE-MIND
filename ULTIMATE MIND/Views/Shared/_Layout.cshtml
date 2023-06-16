@@ -47,10 +47,10 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-adm" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administração</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-adm">
-                            <li><a class="dropdown-item" href="#" id="menu-dropEmpresa">Empresa</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropGrupoUsuario">Grupo de Usuários</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropUsuario">Usuários</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropConfig">Configuração</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="Empresa" id="menu-dropEmpresa">Empresa</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="CadastroGrupoUsuario" id="menu-dropGrupoUsuario">Grupo de Usuários</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="CadastroUsuario" id="menu-dropUsuario">Usuários</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="" id="menu-dropConfig">Configuração</a></li>
                         </ul>
                     </li>
 
@@ -58,18 +58,17 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-cliente" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cliente</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-cliente">
-                            <li><a class="dropdown-item" href="#" id="menu-qrCode">QrCode</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-cadastro">Cadastro</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-atendimento">Atendimento</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="CadastroCliente" id="menu-cadastro">Cadastro</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="Atendimento" id="menu-atendimento">Atendimento</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-dptPessoal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Departamento Pessoal</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-dptPessoal">
-                            <li><a class="dropdown-item" href="#" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropContraCheque">Contra Cheque</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropCadastroContraCheque">Cadastro do contra cheque </a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="CadastroContraCheque" id="menu-dropCadastroContraCheque">Cadastro de Contra Cheque</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="ContraCheque" id="menu-dropContraCheque">Contra Cheque</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="PontoEletronico" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
                         </ul>
                     </li>
 
@@ -78,8 +77,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menu-relatorios" role="button" data-bs-toggle="dropdown" aria-expanded="false">Relatórios</a>
                         <ul class="dropdown-menu" aria-labelledby="menu-relatorios">
-                            <li><a class="dropdown-item" href="#" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
-                            <li><a class="dropdown-item" href="#" id="menu-dropContraCheque">Contra Cheque</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioValidacaoContraCheque" id="menu-dropContraCheque">Contra Cheque</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioPonto" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioAtendimento" id="menu-dropContraCheque">Atendimento</a></li>
                         </ul>
                     </li>
 

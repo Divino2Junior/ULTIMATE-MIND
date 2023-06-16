@@ -121,7 +121,7 @@ function novoCliente() {
     $("#modalCadastroCliente").modal('show');
 }
 
-function salvarUsuario() {
+function salvarCliente() {
 
     if (isEmptyOrNull($("#txtNomeCliente").val())) {
         Alerta("Informe o nome do Cliente");

@@ -17,5 +17,6 @@ namespace ULTIMATE_MIND.Arquitetura.Filtros
         public string Telefone { get; set; }
         public DateTime? DataNascimento { get; set; }
         public DateTime? DataAdmissao { get; set; }
+        public string ImgUsario { get; set; }
     }
 }

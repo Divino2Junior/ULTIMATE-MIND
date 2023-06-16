@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -17,6 +18,11 @@ namespace ULTIMATE_MIND.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public Login(IHostingEnvironment hostingEnvironment)
+        {
+            HostingEnvironment = hostingEnvironment;
         }
 
         [HttpPost]
@@ -66,6 +72,8 @@ namespace ULTIMATE_MIND.Controllers
                     listaPermissoes.AddRange(context.Tela
                         .Where(r => r.IdgrupoPermissao == userBanco.IdgrupoPermissao && r.IdgrupoPermissaoNavigation.Idempresa == userBanco.Idempresa)
                     .Select(r => r.Idtela.ToString()));
+
+                    SetCookies(Constantes.EmpresaSelecionada, userBanco.Idempresa.ToString());
 
                     new Util().AddClaim(this, Constantes.UsuarioPermissoes, JsonConvert.SerializeObject(listaPermissoes));
                 }
