@@ -98,9 +98,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 if (System.IO.File.Exists(caminhoFoto))
                 {
-                    var bytesFoto = System.IO.File.ReadAllBytes(caminhoFoto);
-                    var fotoBase64 = Convert.ToBase64String(bytesFoto);
-                    retorno.ImgUsuario = fotoBase64;
+                    retorno.ImgUsuario = caminhoFoto;
                 }
 
                 return retorno;
@@ -111,11 +109,10 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
-        public object SalvarUsuario(string dados)
+        public object SalvarUsuario([FromBody] CadastroUsuarioDTO obj)
         {
             try
             {
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<CadastroUsuarioDTO>(dados);
                 var context = new ultimate_mindContext();
                 var idEmpresa = GetIDEmpresaLogada();
 
@@ -188,25 +185,21 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.DataDemissao = DateTime.Parse(obj.DataDemissao);
                         isAlteracao = true;
                     }
-                    if (!string.IsNullOrEmpty(obj.ImgUsuario))
+                    if (obj.Imagem != null && obj.Imagem.Length > 0)
                     {
-                        var imagemBase64 = obj.ImgUsuario;
-                        var imageDataBytes = Convert.FromBase64String(imagemBase64);
-
-                        var nomeArquivo = $"{usuario.Idusuario}.jpg";
+                        var nomeArquivo = $"{obj.IdUsuario}.jpg";
                         var caminhoCompleto = this.CaminhoFotoPerfil + nomeArquivo;
 
-                        // Verificar se o arquivo já existe
+                        // Verifique se o arquivo já existe
                         if (System.IO.File.Exists(caminhoCompleto))
                         {
-                            // Excluir o arquivo existente
+                            // Se o arquivo existir, exclua-o antes de salvar o novo
                             System.IO.File.Delete(caminhoCompleto);
                         }
 
-                        using (var imageFile = new FileStream(caminhoCompleto, FileMode.Create))
+                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
                         {
-                            imageFile.Write(imageDataBytes, 0, imageDataBytes.Length);
-                            imageFile.Flush();
+                            obj.Imagem.CopyTo(stream);
                         }
                     }
 
@@ -238,26 +231,21 @@ namespace ULTIMATE_MIND.Controllers
                     context.Usuario.Add(user);
                     context.SaveChanges();
 
-
-                    if (!string.IsNullOrEmpty(obj.ImgUsuario))
+                    if (obj.Imagem != null && obj.Imagem.Length > 0)
                     {
-                        var imagemBase64 = obj.ImgUsuario;
-                        var imageDataBytes = Convert.FromBase64String(imagemBase64);
-
                         var nomeArquivo = $"{user.Idusuario}.jpg";
                         var caminhoCompleto = this.CaminhoFotoPerfil + nomeArquivo;
 
-                        // Verificar se o arquivo já existe
+                        // Verifique se o arquivo já existe
                         if (System.IO.File.Exists(caminhoCompleto))
                         {
-                            // Excluir o arquivo existente
+                            // Se o arquivo existir, exclua-o antes de salvar o novo
                             System.IO.File.Delete(caminhoCompleto);
                         }
 
-                        using (var imageFile = new FileStream(caminhoCompleto, FileMode.Create))
+                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
                         {
-                            imageFile.Write(imageDataBytes, 0, imageDataBytes.Length);
-                            imageFile.Flush();
+                            obj.Imagem.CopyTo(stream);
                         }
                     }
                 }

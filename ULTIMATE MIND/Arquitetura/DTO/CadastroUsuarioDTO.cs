@@ -1,4 +1,6 @@
-﻿namespace ULTIMATE_MIND.Arquitetura.DTO
+﻿using Microsoft.AspNetCore.Http;
+
+namespace ULTIMATE_MIND.Arquitetura.DTO
 {
     public class CadastroUsuarioDTO
     {
@@ -18,6 +20,7 @@
         public string DataNascimento { get; set; }
         public string DataAdmissao { get; set; }
         public string DataDemissao { get; set; }
+        public IFormFile Imagem { get; set; }
         public string ImgUsuario { get; set; }
     }
 }

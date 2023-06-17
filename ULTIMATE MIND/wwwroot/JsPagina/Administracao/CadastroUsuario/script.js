@@ -1,25 +1,10 @@
 var idUsuario = 0;
-var imgUsuario;
 
 $(document).ready(function () {
 
     $('#m-cpf').mask('999.999.999-99');
 
     $("#m-telefone").mask("(99) 99999-9999");
-
-
-    $('#m-imagem-input').on('change', function (e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
-        imgUsuario = null;
-        reader.onload = function () {
-            imgUsuario = reader.result;
-            $('#m-imagem-preview').attr('src', reader.result);
-        }
-
-        reader.readAsDataURL(file);
-    });
-
 
 
     $('#selectFuncao').select2({
@@ -180,7 +165,7 @@ function montarModalUsuario(retorno) {
         $("#selectGrupoPermissao").append(optionGrupoPermissao).trigger('change');
 
         if (retorno.imgUsuario) {
-            $('#m-imagem-preview').attr('src', 'data:image/jpeg;base64,' + retorno.imgUsuario);
+            $('#m-imagem-preview').attr('src', retorno.imgUsuario );
         } else {
             // Se a foto não existe, exibir o ícone padrão
             $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
@@ -226,22 +211,46 @@ function salvarUsuario() {
 
     var objet = {};
 
-    objet.IdUsuario = idUsuario;
-    objet.Matricula = $('#m-matricula').val();
-    objet.Nome = $('#m-nome').val();
-    objet.Cpf = $('#m-cpf').val();
-    objet.Telefone = $('#m-telefone').val();
-    objet.Email = $('#m-email').val();
-    objet.Rg = $('#m-rg').val();
-    objet.Status = $('#selectStatus').val();
-    objet.IdCargo = $('#selectFuncao').val();
-    objet.DataNascimento = $('#m-dataNascimento').val();
-    objet.DataAdmissao = $('#m-dataAdmissao').val();
-    objet.DataDemissao = $('#m-dataDemissao').val();
-    objet.IdGrupoPermissao = $("#selectGrupoPermissao").val();
-    objet.ImgUsuario = imgUsuario;
+    var formData = new FormData();
 
-    PostDados("Administracao/SalvarUsuario", { dados: JSON.stringify(objet) }, SalvarUsuarioResult);
+    formData.append('IdUsuario', idUsuario);
+    formData.append('Matricula', $('#m-matricula').val());
+    formData.append('Nome', $('#m-nome').val());
+    formData.append('Cpf', $('#m-cpf').val());
+    formData.append('Telefone', $('#m-telefone').val());
+    formData.append('Email', $('#m-email').val());
+    formData.append('Rg', $('#m-rg').val());
+    formData.append('Status', $('#selectStatus').val());
+    formData.append('IdCargo', $('#selectFuncao').val());
+    formData.append('DataNascimento', $('#m-dataNascimento').val());
+    formData.append('DataAdmissao', $('#m-dataAdmissao').val());
+    formData.append('DataDemissao', $('#m-dataDemissao').val());
+    formData.append('IdGrupoPermissao', $('#selectGrupoPermissao').val());
+
+    // Verifique se uma imagem foi selecionada
+    var imagemInput = document.getElementById('m-imagem-input');
+    if (imagemInput.files.length > 0) {
+        formData.append('Imagem', imagemInput.files[0]);
+    }
+
+    // Faça a requisição AJAX para o servidor
+    $.ajax({
+        url: '/Administracao/SalvarUsuario',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            $("#modalCadastroCliente").modal('hide');
+            limparModal();
+            $.alert("Usuário Cadastrado com Sucesso!");
+
+            Post("Administracao/BuscarUsuarios", montarTela, Erro);
+        },
+        error: function (xhr, status, error) {
+            $.alert("Erro: " + error);
+        }
+    });
 }
 
 function limparModal() {
@@ -257,14 +266,5 @@ function limparModal() {
     $('#m-dataNascimento').val("");
     $('#m-dataAdmissao').val("");
     $('#m-dataDemissao').val("");
-}
-
-function SalvarUsuarioResult() {
-
-    $("#modalCadastroCliente").modal('hide');
-    limparModal();
-    $.alert("Usuário Cadastrado com Sucesso!");
-
-    Post("Administracao/BuscarUsuarios", montarTela, Erro);
 }
 
