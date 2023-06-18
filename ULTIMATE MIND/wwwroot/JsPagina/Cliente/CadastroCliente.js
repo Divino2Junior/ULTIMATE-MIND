@@ -19,6 +19,29 @@ $(document).ready(function () {
 
         reader.readAsDataURL(file);
     });
+    $('#m-imagem-input').on('change', function (e) {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#m-imagem-preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+
+
+    $('#switch-input').on('change', function () {
+        var isPdf = $(this).prop('checked');
+
+        if (isPdf) {
+            $('#m-imagem-input').attr('accept', 'application/pdf');
+        } else {
+            $('#m-imagem-input').attr('accept', 'image/*');
+        }
+    });
+
+
 
     $('#selectStatus').select2({
         dropdownParent: $('#modalCadastroCliente')

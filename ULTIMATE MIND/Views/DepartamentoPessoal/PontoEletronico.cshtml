@@ -26,6 +26,11 @@
     </div>
 </div>
 
+
+<div class="container">
+    @Html.Partial("~/Views/Shared/_ModalContratante.cshtml")
+</div>
+
 <div class="container">
     <div class="title" style="text-align: center; font-weight: bold;">Data: </div>
     <div class="row">
@@ -79,10 +84,23 @@
             </div>
         </div>
     </div>
-    <div class="footer mb-2" style="text-align: center; font-weight: bold;">Jornada: 08:00</div>
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <div class="card mb-3 mt-4 my-div mx-auto">
+                <div class="card-header">Jornada</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="time" class="form-control" value="08:00" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
 
     <div class="btn-wrapper text-center mb-4">
-        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#folhaDePontoModal"
+        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#folhaDePontoModal"
                 id="historico">
             Historico
         </button>

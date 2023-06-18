@@ -21,5 +21,9 @@ $(document).ready(function() {
     criarLinhasFolhaDePonto();
   });
 
+    $('input[type="time"]').on('click', function () {
+        // Lógica a ser executada quando o elemento for clicado
+    });
+
   
 });

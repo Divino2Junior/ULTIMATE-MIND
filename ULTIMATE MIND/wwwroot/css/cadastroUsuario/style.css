@@ -16,12 +16,30 @@ body {
 #m-imagem-preview {
     width: 200px; /* Defina a largura desejada */
     height: 200px; /* Defina a altura desejada */
+    border-radius: 0;
     object-fit: cover; /* Ajusta a imagem para preencher o contêiner */
     object-position: center; /* Centraliza a imagem horizontalmente e verticalmente */
     border: 5px solid #6a5cb8d0; /* Define a largura e estilo da borda */
     border-color: #362694b2; /* Define a cor da borda */
 }
 
+.switch-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.switch-label {
+    margin-right: 10px;
+}
+
+    .switch-label::before {
+        content: "Imagem";
+    }
+
+    .switch-label::after {
+        content: "PDF";
+    }
 
 /* .titulo{
   color: white;

@@ -5,7 +5,19 @@
 
 <script src="/frameworks/datatable/datatables.min.js"></script>
 <link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
-<script type="text/javascript" src="/JsPagina/Administracao/Cliente/CadastroCliente.js"></script>
+
+<link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="/frameworks/Select2/select2.min.css" />
+<link rel="stylesheet" href="/frameworks/jquery-confirm/dist/jquery-confirm.min.css" />
+<script src="/frameworks/JQuery/jQuery.min.js"></script>
+<script src="/frameworks/Select2/select2.min.js"></script>
+<script src="/frameworks/jquery-confirm/dist/jquery-confirm.min.js"></script>
+<script src="~/frameworks/jQuery-mask/jquery.mask.min.js"></script>
+<script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/popper.js"></script>
+<script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+<script type="text/javascript" src="/JsPagina/Cliente/CadastroCliente.js"></script>
 <link rel="stylesheet" href="/css/cadastroUsuario/style.css">
 
 
@@ -51,12 +63,22 @@
                         <label for="m-imagem" class="col-form-label">Insira o QrCode abaixo</label>
                         <div class="image-upload">
                             <label for="m-imagem-input" class="imagem-input">
-                                <img src="/icons/homem-usuario.png" id="m-imagem-preview" class="rounded-circle">
+                                <img src="/icons/homem-usuario.png" id="m-imagem-preview" class="">
                                 <span class="upload-icon"><i class="bi bi-camera-fill"></i></span>
                             </label>
                             <input hidden type="file" id="m-imagem-input" accept="image/*">
                         </div>
                     </div>
+
+
+                    <div class="switch-container">
+                        <span class="switch-label">Imagem</span>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switch-input">
+                        </div>
+                        <span class="switch-label">PDF</span>
+                    </div>
+
 
                     <div class="row">
                         <div class="col">
