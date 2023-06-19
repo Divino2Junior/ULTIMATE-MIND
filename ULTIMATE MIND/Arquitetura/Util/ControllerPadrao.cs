@@ -71,6 +71,17 @@ namespace ULTIMATE_MIND.Arquitetura.Util
                 return local;
             }
         }
+        public string CaminhoQrCodeCliente
+        {
+            get
+            {
+                var local = HostingEnvironment.WebRootPath + "/QrCodeCliente/";
+                if (!Directory.Exists(local))
+                    Directory.CreateDirectory(local);
+
+                return local;
+            }
+        }
         public IActionResult Erro(Exception e)
         {
             Response.StatusCode = 300;

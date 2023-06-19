@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ULTIMATE_MIND.Arquitetura.Util;
+using Microsoft.Extensions.Options;
 
 namespace ULTIMATE_MIND
 {
@@ -43,8 +44,9 @@ namespace ULTIMATE_MIND
 
             services.Configure<FormOptions>(x =>
             {
+                x.MultipartBodyLengthLimit = int.MaxValue;
                 x.ValueLengthLimit = int.MaxValue;
-                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+                x.MemoryBufferThreshold = int.MaxValue;
             });
 
             services.Configure<IISServerOptions>(options =>

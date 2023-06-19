@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using Microsoft.AspNetCore.Authentication;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace ULTIMATE_MIND.Arquitetura.Util
 {
@@ -166,6 +167,28 @@ namespace ULTIMATE_MIND.Arquitetura.Util
             // Retorna o telefone sem formatação
             return telefoneApenasNumeros;
         }
+        public string RemoveFormatacaoCNPJ(string cnpj)
+        {
+            if (!string.IsNullOrEmpty(cnpj))
+            {
+                return cnpj.Replace(".", "").Replace("/", "").Replace("-", "");
+            }
+            else
+            {
+                return "";
+            }
+        }
+        public float GetCoordenada(string pValor)
+        {
+            string novoValor = "";
+            if (pValor.Contains("-"))
+            {
+                novoValor = "-";
+            }
 
+            novoValor += pValor.Replace("-", "").Replace("+", "").Replace(" ", "");
+
+            return float.Parse(novoValor, new CultureInfo("pt-Br"));
+        }
     }
 }

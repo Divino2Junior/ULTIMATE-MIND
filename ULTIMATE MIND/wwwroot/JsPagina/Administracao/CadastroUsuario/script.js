@@ -1,11 +1,24 @@
 var idUsuario = 0;
 
+var imgUsuario;
+
 $(document).ready(function () {
 
     $('#m-cpf').mask('999.999.999-99');
 
     $("#m-telefone").mask("(99) 99999-9999");
 
+    $('#m-imagem-input').on('change', function (e) {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        imgUsuario = null;
+        reader.onload = function () {
+            imgUsuario = reader.result;
+            $('#m-imagem-preview').attr('src', reader.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
 
     $('#selectFuncao').select2({
         dropdownParent: $('#modalCadastroCliente'),
@@ -165,7 +178,8 @@ function montarModalUsuario(retorno) {
         $("#selectGrupoPermissao").append(optionGrupoPermissao).trigger('change');
 
         if (retorno.imgUsuario) {
-            $('#m-imagem-preview').attr('src', retorno.imgUsuario );
+            var fotoAtualizada = retorno.imgUsuario + '?t=' + new Date().getTime();
+            $('#m-imagem-preview').attr('src', fotoAtualizada);
         } else {
             // Se a foto não existe, exibir o ícone padrão
             $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
@@ -179,6 +193,7 @@ function novoUsuario() {
 
     idUsuario = 0;
     limparModal();
+    $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
     $("#modalCadastroCliente").modal('show');
 }
 
@@ -209,8 +224,6 @@ function salvarUsuario() {
         return;
     }
 
-    var objet = {};
-
     var formData = new FormData();
 
     formData.append('IdUsuario', idUsuario);
@@ -238,8 +251,8 @@ function salvarUsuario() {
         url: '/Administracao/SalvarUsuario',
         type: 'POST',
         data: formData,
-        processData: false,
         contentType: false,
+        processData: false,
         success: function (response) {
             $("#modalCadastroCliente").modal('hide');
             limparModal();

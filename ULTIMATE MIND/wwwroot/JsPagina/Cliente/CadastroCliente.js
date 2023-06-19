@@ -19,17 +19,6 @@ $(document).ready(function () {
 
         reader.readAsDataURL(file);
     });
-    $('#m-imagem-input').on('change', function (e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            $('#m-imagem-preview').attr('src', e.target.result);
-        }
-
-        reader.readAsDataURL(file);
-    });
-
 
     $('#switch-input').on('change', function () {
         var isPdf = $(this).prop('checked');
@@ -94,9 +83,10 @@ function montarTela(retorno) {
         $.each(retorno, function (index, item) {
             tableCliente.row.add([
                 item.idcliente,
-                item.nomeCliente,
+                item.apelido,
                 item.cpfouCnpj,
-                item.statusNome,
+                item.status,
+                item.telefone,
                 '<button class="btn btn-outline-info" onclick="editarUsuario(' + item.idcliente + ')">Editar</button>'
             ]);
         });
@@ -121,7 +111,7 @@ function montarModalCliente(retorno) {
 
         idCliente = retorno.idcliente;
 
-        $('#txtNomeCliente').val(retorno.nomeCliente);
+        $('#txtNomeCliente').val(retorno.nome);
         $('#txtCpf').val(retorno.cpf);
         $('#txtCnpj').val(retorno.cpnj);
         $('#txtTelefone').val(retorno.telefone);
@@ -132,6 +122,14 @@ function montarModalCliente(retorno) {
 
         var option = new Option(retorno.nomeStatus, retorno.status, true, true);
         $('#selectStatus').append(option).trigger('change');
+
+        if (retorno.urlFoto) {
+            var fotoAtualizada = retorno.urlFoto + '?t=' + new Date().getTime();
+            $('#m-imagem-preview').attr('src', fotoAtualizada);
+        } else {
+            // Se a foto não existe, exibir o ícone padrão
+            $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
+        }
     }
 
     $("#modalCadastroCliente").modal('show');
@@ -150,14 +148,6 @@ function salvarCliente() {
         Alerta("Informe o nome do Cliente");
         return;
     }
-    if (isEmptyOrNull($("#txtCnpj").val())) {
-        Alerta("Informe o CNPJ");
-        return;
-    }
-    if (isEmptyOrNull($("#txtCpf").val())) {
-        Alerta("Informe o CPF");
-        return;
-    }
     if (isEmptyOrNull($("#selectStatus").val())) {
         Alerta("Informe o Status");
         return;
@@ -167,20 +157,43 @@ function salvarCliente() {
         return;
     }
 
-    var objet = {};
+    var formData = new FormData();
 
-    objet.IdUsuario = idUsuario;
+    formData.append('idcliente', idCliente);
+    formData.append('Nome', $('#txtNomeCliente').val());
+    formData.append('Cpf', $('#txtCpf').val());
+    formData.append('Cpnj', $('#txtCnpj').val());
+    formData.append('Telefone', $('#txtTelefone').val());
+    formData.append('Email', $('#m-email').val());
+    formData.append('Latitude', $('#txtLatitude').val());
+    formData.append('Longitude', $('#txtLongitude').val());
+    formData.append('Endereco', $('#txtEndereco').val());
+    formData.append('Status', $('#selectStatus').val());
 
-    objet.NomeCliente = $('#txtNomeCliente').val();
-    objet.Cpf = $('#txtCpf').val();
-    objet.Cpnj = $('#txtCnpj').val(j);
-    objet.Telefone = $('#txtTelefone').val();
-    objet.Email = $('#m-email').val();
-    objet.Latitude = $('#txtLatitude').val();
-    objet.Longitude = $('#txtLongitude').val();
-    objet.Endereco = $('#txtEndereco').val();
+    // Verifique se uma imagem foi selecionada
+    var imagemInput = document.getElementById('m-imagem-input');
+    if (imagemInput.files.length > 0) {
+        formData.append('Imagem', imagemInput.files[0]);
+    }
 
-    PostDados("Cliente/SalvarCliente", { dados: JSON.stringify(objet) }, SalvarUsuarioResult);
+    // Faça a requisição AJAX para o servidor
+    $.ajax({
+        url: '/Cliente/SalvarCliente',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            $("#modalCadastroCliente").modal('hide');
+            limparModal();
+            $.alert("Cliente Cadastrado com Sucesso!");
+
+            Post("Cliente/BuscarClientes", montarTela, Erro);
+        },
+        error: function (xhr, status, error) {
+            $.alert("Erro: " + error);
+        }
+    });
 }
 
 function limparModal() {
@@ -193,14 +206,6 @@ function limparModal() {
     $('#txtLongitude').val("");
     $('#txtEndereco').val("");
     $("#selectStatus").val(null).trigger('change');
-}
-
-function SalvarUsuarioResult() {
-
-    $("#modalCadastroCliente").modal('hide');
-    limparModal();
-    $.alert("Cliente Cadastrado com Sucesso!");
-
-    Post("Cliente/BuscarClientes", montarTela, Erro);
+    $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
 }
 

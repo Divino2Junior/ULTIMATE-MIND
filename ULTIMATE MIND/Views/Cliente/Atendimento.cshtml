@@ -1,7 +1,60 @@
 ﻿@{
     Layout = "_Layout";
-    ViewData["Title"] = "Cadastro de Usuário";
+    ViewData["Title"] = "Atendimento";
 }
 
 <script src="/frameworks/datatable/datatables.min.js"></script>
 <link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+<script src="/JsPagina/Cliente/Atendimento.js"></script>
+
+<div class="container" style="padding-top:20px;">
+    <div class="row">
+        <div class="col-md-6" style="padding-top:20px;">
+            <h2>Iniciar e Finalizar Atendimento</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Selecione o Cliente</h5>
+                    <select id="selectCliente" class="js-example-responsive" style="width: 100%">
+                    </select>
+                    <div style="padding-top:10px;">
+                        <button id="btnIniciarAtendimento" class="btn btn-primary" onclick="BuscarQrCode();">Iniciar Atendimento</button>
+                    </div>                   
+                    <hr>
+                    <h5 class="card-title">Observação</h5>
+                    <textarea id="txtObservacao" class="form-control mb-3" rows="4"></textarea>
+                    <button id="btnFinalizarAtendimento" class="btn btn-primary" onclick="finalizarAtendimento();">Finalizar Atendimento</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-top:20px;">
+            <h2>Atendimentos Realizados</h2>
+            <table id="tabelaAtendimentos" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para exibir QR Code -->
+<div id="modalQRCode" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">QR Code do Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <img src="/icons/homem-usuario.png" id="m-imagem-preview" class="">
+            </div>
+        </div>
+    </div>
+</div>
+

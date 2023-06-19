@@ -12,9 +12,9 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public DateTime InicioAtendimento { get; set; }
         public double InicioAtendimentoLat { get; set; }
         public double InicioAtendimentoLong { get; set; }
-        public DateTime FimAtendimento { get; set; }
-        public double FimAtendimentoLat { get; set; }
-        public double FimAtendimentoLong { get; set; }
+        public DateTime? FimAtendimento { get; set; }
+        public double? FimAtendimentoLat { get; set; }
+        public double? FimAtendimentoLong { get; set; }
         public string Observacao { get; set; }
 
         public virtual Cliente IdclienteNavigation { get; set; }

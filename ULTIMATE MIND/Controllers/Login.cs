@@ -88,7 +88,7 @@ namespace ULTIMATE_MIND.Controllers
 
         public List<Tela> ObterPermissoesDoUsuario(int userId)
         {
-            using (var dbContext = new ultimate_mindContext()) // Substitua "SeuDbContext" pelo nome da sua classe de contexto de banco de dados
+            using (var dbContext = new ultimate_mindContext())
             {
                 // Obter o grupo de permissões do usuário
                 var grupoPermissao = dbContext.Usuario

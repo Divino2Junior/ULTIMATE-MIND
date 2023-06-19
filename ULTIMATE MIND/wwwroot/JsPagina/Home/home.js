@@ -5,8 +5,9 @@ $(document).ready(function () {
 
 function montarTela(colaborador) {
 
+    var fotoAtualizada = colaborador.foto + '?t=' + new Date().getTime();
     // Preencha as informações do colaborador na tela
-    $("#fotoUsuario").attr("src", colaborador.foto);
+    $("#fotoUsuario").attr("src", fotoAtualizada);
     $(".matricula").text("Matrícula: " + colaborador.matricula);
     $(".nome").text(colaborador.nome);
     $(".cpf").text("CPF: " + colaborador.cpf);

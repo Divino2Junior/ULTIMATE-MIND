@@ -55,14 +55,14 @@ namespace ULTIMATE_MIND.Controllers
 
                 if (string.IsNullOrEmpty(q))
                 {
-                    return context.Usuario.Select(r => new
+                    return context.Usuario.Where(r=> r.Idempresa == idEmpresa).Select(r => new
                     {
                         r.Idusuario,
                         Nome = r.Matricula + " - " + r.Nome
-                    });
+                    }).ToList();
                 }
 
-                var usuarios = context.Usuario.OrderBy(u => Convert.ToInt32(u.Matricula)).Select(r => new
+                var usuarios = context.Usuario.Where(r => r.Idempresa == idEmpresa).OrderBy(u => Convert.ToInt32(u.Matricula)).Select(r => new
                 {
                     r.Idusuario,
                     Nome = r.Matricula + " - " + r.Nome
@@ -244,7 +244,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 var contrasCheques = context.ValidacaoContraCheque
                     .Include(r => r.IdusuarioNavigation)
-                    .Where(r => r.Idempresa == idEmpresa).ToList();
+                    .Where(r => r.Idempresa == idEmpresa && r.IsAssinado != true).ToList();
 
                 var retorno = new List<ContraChequeDTO>();
 
@@ -263,8 +263,7 @@ namespace ULTIMATE_MIND.Controllers
                     contraCheque.Matricula = item.IdusuarioNavigation.Matricula;
                     contraCheque.IdContraCheque = item.IdvalidacaoContraCheque;
                     contraCheque.NomeColaborador = item.IdusuarioNavigation.Nome;
-                    contraCheque.Referencia = dataFormatada;
-                    contraCheque.IsAssinado = item.IsAssinado;
+                    contraCheque.Referencia = dataFormatada.ToUpper();
                     retorno.Add(contraCheque);
                 }
 
@@ -275,6 +274,100 @@ namespace ULTIMATE_MIND.Controllers
                     return null;
             }
             catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object ExcluirContraChequeUsuario(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idempresa = GetIDEmpresaLogada();
+
+                var contraCheque = context.ValidacaoContraCheque.Where(r => r.IdvalidacaoContraCheque == id).FirstOrDefault();
+
+                if (contraCheque == null)
+                    return Erro("Contra Cheque não encontrado!");
+
+                var nomeArquivo = $"ContraCheque_{contraCheque.Idusuario}_{contraCheque.Referencia.ToString("dd_MM_yyyy")}.pdf";
+                var caminhoCompleto = this.CaminhoContraCheque + nomeArquivo;
+
+                // Verifique se o arquivo já existe
+                if (System.IO.File.Exists(caminhoCompleto))
+                {
+                    // Se o arquivo existir, exclua-o antes de salvar o novo
+                    System.IO.File.Delete(caminhoCompleto);
+                }
+
+                context.ValidacaoContraCheque.Remove(contraCheque);
+                context.SaveChanges();
+
+                return Ok();
+
+
+            }
+            catch(Exception ex)
+            {
+                return Erro(ex);
+            }
+
+        }
+
+        public object ConsultarValidacaoContraCheque()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+                var user = GetUsuarioLogado();
+
+                var contrasCheques = context.ValidacaoContraCheque
+                    .Include(r => r.IdusuarioNavigation)
+                    .Where(r => r.Idempresa == idEmpresa && r.Idusuario == user.IDUsuario).ToList();
+
+                var retorno = new List<ContraChequeDTO>();
+
+                foreach (var item in contrasCheques)
+                {
+
+                    string mesFormatado = item.Referencia.ToString("MMMM", new CultureInfo("pt-BR"));
+                    string anoFormatado = item.Referencia.ToString("yyyy");
+
+                    //// Formata o mês abreviado
+                    //string mesAbreviado = mesReferencia.ToString("MMM", new CultureInfo("pt-BR"));
+
+                    string dataFormatada = $"{mesFormatado}/{anoFormatado}";
+
+                    var contraCheque = new ContraChequeDTO();
+                    contraCheque.Matricula = item.IdusuarioNavigation.Matricula;
+                    contraCheque.IdContraCheque = item.IdvalidacaoContraCheque;
+                    contraCheque.NomeColaborador = item.IdusuarioNavigation.Nome;
+                    contraCheque.MesReferencia = mesFormatado.ToUpper();
+                    contraCheque.AnoReferencia = anoFormatado.ToUpper();
+                    contraCheque.IsAssinado = item.IsAssinado;
+
+                    var nomeArquivo = $"ContraCheque_{item.Idusuario}_{item.Referencia.ToString("dd_MM_yyyy")}.pdf";
+                    var caminhoCompleto = this.CaminhoContraCheque + nomeArquivo;
+
+                    // Verifique se o arquivo já existe
+                    if (System.IO.File.Exists(caminhoCompleto))
+                    {
+                        contraCheque.UrlPdf = "/ContraCheques/" + nomeArquivo;
+                    }
+                   
+                    retorno.Add(contraCheque);
+                }
+
+
+                if (retorno.Count > 0)
+                    return retorno;
+                else
+                    return null;
+
+            }
+            catch(Exception ex)
             {
                 return Erro(ex);
             }

@@ -85,8 +85,7 @@ $(document).ready(function () {
                 Post('DepartamentoPessoal/BuscarContraCheque', montarTela, Erro);
             },
             error: function (xhr, status, error) {
-                // Exibir mensagem de erro em caso de falha na requisição
-                console.log(error);
+                $.alert("Erro: " + error);
             }
         });
     });
@@ -106,16 +105,17 @@ function montarTela(retorno) {
             "pageLength": 50,
         });
 
+    contraChequesTable.clear();
     mostrarLoading();
 
     if (retorno != null && retorno != undefined) {
 
-        contraChequesTable.clear();
+
         $.each(retorno, function (index, item) {
             contraChequesTable.row.add([
                 item.nomeColaborador,
                 item.referencia,
-                "<img class='imgAcao' onclick='excluirUsuario(" + item.idContraCheque + ")' src='../../images/delete-24.png'></img>"
+                "<img class='imgAcao' onclick='excluirContraChequeUsuario(" + item.idContraCheque + ")' src='../../images/delete-24.png'></img>"
             ]);
         });
 
@@ -128,12 +128,13 @@ function montarTela(retorno) {
     }
 }
 
-function excluirUsuario(id) {
+function excluirContraChequeUsuario(id) {
 
-    PostDados("DepartamentoPessoal/ExcluirContraChequeUsuario", { idContraCheque: JSON.stringify(id) }, excluirUsuarioResult, Erro);
+    Post("DepartamentoPessoal/ExcluirContraChequeUsuario/" + id, excluirContraChequeUsuarioResult);
 }
 
-function excluirUsuarioResult() {
+function excluirContraChequeUsuarioResult() {
 
+    $.alert("Contra Cheque Excluido com Sucesso!");
     Post('DepartamentoPessoal/BuscarContraCheque', montarTela, Erro);
 }

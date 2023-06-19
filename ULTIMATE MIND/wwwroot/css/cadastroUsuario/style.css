@@ -33,13 +33,13 @@ body {
     margin-right: 10px;
 }
 
-    .switch-label::before {
+    /*.switch-label::before {
         content: "Imagem";
     }
 
     .switch-label::after {
         content: "PDF";
-    }
+    }*/
 
 /* .titulo{
   color: white;

@@ -7,6 +7,10 @@
         public string NomeColaborador { get; set; }
         public string Referencia { get; set; }
 
+        public string MesReferencia { get;set; }
+        public string AnoReferencia { get;set; }
+        public string UrlPdf { get; set; }
+
         public bool? IsAssinado { get; set; }
     }
 }

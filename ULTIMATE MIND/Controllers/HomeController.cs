@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ULTIMATE_MIND.Arquitetura.DTO;
@@ -52,7 +53,14 @@ namespace ULTIMATE_MIND.Controllers
                     .Where(r => r.Idusuario == use.IDUsuario).FirstOrDefault();
 
                 var retorno = new HomeDTO();
-                retorno.Foto = this.CaminhoFotoPerfil + usuario.NomeFoto;
+
+                var caminhoFoto = Path.Combine(CaminhoFotoPerfil, $"{usuario.Idusuario}.jpg");
+
+                if (System.IO.File.Exists(caminhoFoto))
+                {
+                    retorno.Foto = "/FotoPerfil/" + $"{usuario.Idusuario}.jpg";
+                }
+
                 retorno.Matricula = usuario.Matricula;
                 retorno.Nome = usuario.Nome;
                 retorno.Cpf = new Util().FormataCPF(usuario.Cpf);

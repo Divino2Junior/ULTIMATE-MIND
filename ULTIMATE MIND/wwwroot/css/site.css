@@ -96,3 +96,13 @@ html {
     cursor: pointer;
     margin: 5px;
 }
+
+#m-imagem-preview {
+    width: 200px; /* Defina a largura desejada */
+    height: 200px; /* Defina a altura desejada */
+    border-radius: 0;
+    object-fit: cover; /* Ajusta a imagem para preencher o contêiner */
+    object-position: center; /* Centraliza a imagem horizontalmente e verticalmente */
+    border: 5px solid #6a5cb8d0; /* Define a largura e estilo da borda */
+    border-color: #362694b2; /* Define a cor da borda */
+}

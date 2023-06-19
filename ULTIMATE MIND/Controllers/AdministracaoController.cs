@@ -94,11 +94,11 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.IdGrupoPermissao = usuario.IdgrupoPermissao;
                 retorno.NomeGrupoPermissao = usuario.IdgrupoPermissaoNavigation.Nome;
 
-                var caminhoFoto = CaminhoFotoPerfil + $"{usuario.Idusuario}.jpg";
+                var caminhoFoto = Path.Combine(CaminhoFotoPerfil, $"{usuario.Idusuario}.jpg");
 
                 if (System.IO.File.Exists(caminhoFoto))
                 {
-                    retorno.ImgUsuario = caminhoFoto;
+                    retorno.ImgUsuario = "/FotoPerfil/" + $"{usuario.Idusuario}.jpg";
                 }
 
                 return retorno;
@@ -108,8 +108,7 @@ namespace ULTIMATE_MIND.Controllers
                 return Erro(ex);
             }
         }
-
-        public object SalvarUsuario([FromBody] CadastroUsuarioDTO obj)
+        public IActionResult SalvarUsuario(CadastroUsuarioDTO obj)
         {
             try
             {
@@ -206,6 +205,7 @@ namespace ULTIMATE_MIND.Controllers
                     if (isAlteracao)
                     {
                         context.Entry(usuario);
+                        context.SaveChanges();
                     }
                 }
                 else
