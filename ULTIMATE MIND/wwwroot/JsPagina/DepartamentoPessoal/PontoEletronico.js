@@ -1,4 +1,15 @@
-$(document).ready(function() {
+$(document).ready(function () {
+
+    $(".toggle-input").click(function () {
+        var target = $(this).data("target");
+        $(target).toggle();
+    });
+
+    $(".btn-primary").click(function () {
+        var target = $(this).data("target");
+        $(target).modal("show");
+    });
+
   // Função para criar as linhas da folha de ponto
   function criarLinhasFolhaDePonto() {
     var $tbody = $("#folhaDePontoBody");
@@ -24,6 +35,7 @@ $(document).ready(function() {
     $('input[type="time"]').on('click', function () {
         // Lógica a ser executada quando o elemento for clicado
     });
+
 
   
 });
