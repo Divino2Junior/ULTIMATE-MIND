@@ -23,5 +23,7 @@ namespace ULTIMATE_MIND.Arquitetura.DTO
         public string DataDemissao { get; set; }
         public IFormFile Imagem { get; set; }
         public string ImgUsuario { get; set; }
+        public string HoraEntrada { get; set; }
+        public string HoraSaida { get; set; }
     }
 }

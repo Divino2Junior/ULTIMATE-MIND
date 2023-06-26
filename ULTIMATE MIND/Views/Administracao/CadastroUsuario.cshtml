@@ -36,9 +36,7 @@
 </div>
 
 <div class="modal" id="modalCadastroCliente">
-
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Adicionar colaborador</h5>
@@ -46,7 +44,6 @@
             </div>
             <div class="modal-body">
                 <form id="myForm" method="POST" enctype="multipart/form-data">
-
                     <div class="text-center mb-3">
                         <label for="m-imagem" class="col-form-label">Selecione sua foto abaixo</label>
                         <div class="image-upload">
@@ -57,7 +54,6 @@
                             <input hidden type="file" id="m-imagem-input" accept="image/*">
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -65,7 +61,6 @@
                                 <input type="text" maxlength="20" class="form-control" id="m-matricula" required>
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-nome" class="col-form-label">Nome</label>
@@ -73,7 +68,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -81,7 +75,6 @@
                                 <input type="text" class="form-control" id="m-cpf" maxlength="14" />
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-telefone" class="col-form-label">Telefone</label>
@@ -89,25 +82,20 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-email" class="col-form-label">E-mail</label>
                                 <input type="email" class="form-control" id="m-email" />
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-rg" class="col-form-label">RG</label>
                                 <input type="text" class="form-control" id="m-rg" />
                             </div>
                         </div>
-
                     </div>
-
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -116,7 +104,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="selectFuncao" class="col-form-label">Função</label>
@@ -124,7 +111,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="selectGrupoPermissao" class="col-form-label">Grupo de Usuário</label>
@@ -133,7 +119,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -141,13 +126,11 @@
                                 <input type="date" class="form-control" id="m-dataNascimento" />
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-dataAdmissao" class="col-form-label">Data de admissão</label>
                                 <input type="date" class="form-control" id="m-dataAdmissao" />
                             </div>
-
                         </div>
                         <div class="col">
                             <div class="mb-3">
@@ -156,10 +139,22 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="m-entrada" class="col-form-label">Hora de Entrada</label>
+                                <input type="time" class="form-control" id="m-entrada">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="m-saida" class="col-form-label">Hora de Saída</label>
+                                <input type="time" class="form-control" id="m-saida">
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-outline-primary" id="btn-salvar" onclick="salvarUsuario();">Salvar</button>

@@ -167,6 +167,8 @@ function montarModalUsuario(retorno) {
         $('#m-dataNascimento').val(retorno.dataNascimento);
         $('#m-dataAdmissao').val(retorno.dataAdmissao);
         $('#m-dataDemissao').val(retorno.dataDemissao);
+        $('#m-entrada').val(retorno.horaEntrada);
+        $('#m-saida').val(retorno.horaSaida);
 
         var option = new Option(retorno.nomeStatus, retorno.status, true, true);
         $('#selectStatus').append(option).trigger('change');
@@ -239,6 +241,8 @@ function salvarUsuario() {
     formData.append('DataAdmissao', $('#m-dataAdmissao').val());
     formData.append('DataDemissao', $('#m-dataDemissao').val());
     formData.append('IdGrupoPermissao', $('#selectGrupoPermissao').val());
+    formData.append('HoraEntrada', $('#m-entrada').val());
+    formData.append('HoraSaida', $('#m-saida').val());
 
     // Verifique se uma imagem foi selecionada
     var imagemInput = document.getElementById('m-imagem-input');
@@ -279,5 +283,7 @@ function limparModal() {
     $('#m-dataNascimento').val("");
     $('#m-dataAdmissao').val("");
     $('#m-dataDemissao').val("");
+    $('#m-entrada').val("");
+    $('#m-saida').val("");
 }
 

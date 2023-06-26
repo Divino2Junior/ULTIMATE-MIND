@@ -39,20 +39,22 @@ namespace ULTIMATE_MIND.Controllers
                 var context = new ultimate_mindContext();
                 var empresa = GetIDEmpresaLogada();
 
-                var usuarios = context.Usuario.Where(r => r.Idempresa == empresa && r.Status != EnumStatusUsuario.Inativo.ID)
-                    .Include(r => r.IdcargoNavigation)
-                    .Select(r => new
-                    {
-                        r.Idusuario,
-                        Matricula = Convert.ToInt32(r.Matricula),
-                        r.Status,
-                        r.Nome,
-                        Cargo = r.IdcargoNavigation.NomeCargo,
-                        Cpf = new Util().FormataCPF(r.Cpf),
-                    }).ToList();
+                //var usuarios = context.Usuario.Where(r => r.Idempresa == empresa && r.Status != EnumStatusUsuario.Inativo.ID)
+                //    .Include(r => r.IdcargoNavigation)
+                //    .Select(r => new
+                //    {
+                //        r.Idusuario,
+                //        Matricula = Convert.ToInt32(r.Matricula),
+                //        r.Status,
+                //        r.Nome,
+                //        Cargo = r.IdcargoNavigation.NomeCargo,
+                //        Cpf = new Util().FormataCPF(r.Cpf),
+                //        HoraEntrada = r.HoraEntrada,
+                //        HoraSaida = r.HoraSaida
+                //    }).ToList();
 
-                if (usuarios.Count > 0)
-                    return usuarios.OrderBy(r => r.Matricula).ToList();
+                //if (usuarios.Count > 0)
+                //    return usuarios.OrderBy(r => r.Matricula).ToList();
 
                 return null;
             }
@@ -93,6 +95,8 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.DataDemissao = usuario.DataDemissao == null ? "" : usuario.DataDemissao.Value.ToString("yyyy-MM-dd");
                 retorno.IdGrupoPermissao = usuario.IdgrupoPermissao;
                 retorno.NomeGrupoPermissao = usuario.IdgrupoPermissaoNavigation.Nome;
+                //retorno.HoraEntrada = usuario.HoraEntrada == null ? "00:00" : usuario.HoraEntrada;
+                //retorno.HoraSaida = usuario.HoraSaida == null ? "00:00" : usuario.HoraSaida;
 
                 var caminhoFoto = Path.Combine(CaminhoFotoPerfil, $"{usuario.Idusuario}.jpg");
 
@@ -184,6 +188,16 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.DataDemissao = DateTime.Parse(obj.DataDemissao);
                         isAlteracao = true;
                     }
+                    //if (usuario.HoraEntrada != obj.HoraEntrada)
+                    //{
+                    //    usuario.HoraEntrada = obj.HoraEntrada;
+                    //    isAlteracao = true;
+                    //}
+                    //if (usuario.HoraSaida != obj.HoraSaida)
+                    //{
+                    //    usuario.HoraSaida = obj.HoraSaida;
+                    //    isAlteracao = true;
+                    //}
                     if (obj.Imagem != null && obj.Imagem.Length > 0)
                     {
                         var nomeArquivo = $"{obj.IdUsuario}.jpg";
@@ -227,6 +241,8 @@ namespace ULTIMATE_MIND.Controllers
                     user.Senha = new Util().GetHashMD5(new Util().RemoveFormatacaoCPF(obj.Cpf).Substring(0, 4));
                     user.DataAdmissao = obj.DataAdmissao == null ? null : DateTime.TryParse(obj.DataAdmissao, out dataNascimento) ? (DateTime?)dataNascimento : null;
                     user.DataDemissao = obj.DataDemissao == null ? null : DateTime.TryParse(obj.DataDemissao, out dataNascimento) ? (DateTime?)dataNascimento : null;
+                    //user.HoraEntrada = obj.HoraEntrada == null ? "00:00" : obj.HoraEntrada;
+                    //user.HoraSaida = obj.HoraSaida == null ? "00:00" : obj.HoraSaida;
 
                     context.Usuario.Add(user);
                     context.SaveChanges();

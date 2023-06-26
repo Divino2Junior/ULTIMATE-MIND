@@ -30,7 +30,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=rg000255\\sqldev;Initial Catalog=ultimate_mind;Persist Security Info=True;User ID=sa;Password=123;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-HAS0K3C\\SQLEXPRESS;Initial Catalog=ultimate_mind;Integrated Security=True;");
             }
         }
 
