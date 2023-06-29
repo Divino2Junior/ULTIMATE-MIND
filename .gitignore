@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /ULTIMATE MIND/appsettings.json
+/ULTIMATE MIND/Arquitetura/Model/UltimateMind/ultimate_mindContext.cs
