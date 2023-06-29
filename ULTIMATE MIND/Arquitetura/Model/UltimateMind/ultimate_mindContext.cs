@@ -30,7 +30,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-HAS0K3C\\SQLEXPRESS;Initial Catalog=ultimate_mind;Integrated Security=True;");
+                optionsBuilder.UseSqlServer("Server=RG001156\\SQLEXPRESS;Database=ultimate_mind;Trusted_Connection=True;");
             }
         }
 
@@ -250,6 +250,14 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                 entity.Property(e => e.DataNascimento).HasColumnType("date");
 
                 entity.Property(e => e.Email).IsUnicode(false);
+
+                entity.Property(e => e.HoraEntrada)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.HoraSaida)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Idcargo).HasColumnName("IDCargo");
 

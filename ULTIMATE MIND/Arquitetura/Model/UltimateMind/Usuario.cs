@@ -28,6 +28,9 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public DateTime? DataAdmissao { get; set; }
         public DateTime? DataDemissao { get; set; }
         public string NomeFoto { get; set; }
+        public string HoraEntrada { get; set; }
+        public string HoraSaida { get; set; }
+        public bool? IsLiberacaoPonto { get; set; }
 
         public virtual Cargo IdcargoNavigation { get; set; }
         public virtual Empresa IdempresaNavigation { get; set; }
