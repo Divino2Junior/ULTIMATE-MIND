@@ -20,6 +20,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual DbSet<Cliente> Cliente { get; set; }
         public virtual DbSet<Configuracao> Configuracao { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
+        public virtual DbSet<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual DbSet<GrupoPermissao> GrupoPermissao { get; set; }
         public virtual DbSet<Ponto> Ponto { get; set; }
         public virtual DbSet<Tela> Tela { get; set; }
@@ -29,8 +30,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=RG001156\\SQLEXPRESS;Database=ultimate_mind;Trusted_Connection=True;");
+            { 
+                optionsBuilder.UseSqlServer("Server=rg001156\\sqlexpress;Database=ultimate_mind;Trusted_Connection=True;");
             }
         }
 
@@ -164,6 +165,29 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                 entity.Property(e => e.Telefone)
                     .HasMaxLength(20)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<EmpresaUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdempresaUsuario);
+
+                entity.Property(e => e.IdempresaUsuario).HasColumnName("IDEmpresaUsuario");
+
+                entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
+
+                entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
+
+                entity.HasOne(d => d.IdempresaNavigation)
+                    .WithMany(p => p.EmpresaUsuario)
+                    .HasForeignKey(d => d.Idempresa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EmpresaUsuario_Empresa");
+
+                entity.HasOne(d => d.IdusuarioNavigation)
+                    .WithMany(p => p.EmpresaUsuario)
+                    .HasForeignKey(d => d.Idusuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EmpresaUsuario_Usuario");
             });
 
             modelBuilder.Entity<GrupoPermissao>(entity =>
