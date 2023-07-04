@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -49,10 +50,17 @@ namespace ULTIMATE_MIND.Controllers
                     return this.Erro("Usuário ou senha não encontrado.");
                 }
 
-                var empresaLogon = context.Empresa.Where(r => r.Idempresa == userBanco.Idempresa).FirstOrDefault();
+                var empresas = context.EmpresaUsuario.Include(r=> r.IdempresaNavigation).Where(r => r.Idusuario == userBanco.Idusuario && r.IsAtivado.Value).ToList();
 
-                if (empresaLogon == null || empresaLogon.Idempresa <= 0)
-                    return this.Erro("Usuário não possui empresa padrão configurada!");
+                if (empresas.Count > 1)
+                {
+                    usuario.IDUsuario = userBanco.Idusuario;
+                    usuario.IDGrupoUsuario = userBanco.IdgrupoPermissao;
+                    usuario.Nome = userBanco.Nome;
+                    new Util().AddClaim(this, Constantes.UsuarioLogado, JsonConvert.SerializeObject(usuario));
+                    return empresas.Select(r => new { r.Idempresa, r.IdempresaNavigation.Apelido }).ToList();
+
+                }
 
                 usuario.IDUsuario = userBanco.Idusuario;
                 usuario.IDEmpresaLogon = userBanco.Idempresa;
@@ -112,11 +120,71 @@ namespace ULTIMATE_MIND.Controllers
         }
 
         [HttpPost]
+        public object SalvarEmpresaLogin(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var empresa = context.Empresa.Where(r => r.Idempresa == id).FirstOrDefault();
+
+                var usuario = GetUsuarioLogado();
+                usuario.IDEmpresaLogon = empresa.Idempresa;
+                usuario.ApelidoEmpresa = empresa.Apelido;
+                usuario.NomeFantasiaEmpresa = empresa.NomeFantasia;
+                new Util().AddClaim(this, Constantes.UsuarioLogado, JsonConvert.SerializeObject(usuario));
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+        [HttpPost]
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync();
 
             return Ok();
+        }
+
+
+        public object BuscarSelectEmpresa()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                string q = HttpContext.Request.Query["q"].ToString();
+
+                var user = GetUsuarioLogado();
+
+                if (string.IsNullOrEmpty(q))
+                {
+                    return context.EmpresaUsuario
+                        .Include(r=> r.IdusuarioNavigation).Where(r=> r.Idusuario == user.IDUsuario && r.IsAtivado.Value).Select(r => new
+                    {
+                        r.Idempresa,
+                        Nome = r.IdempresaNavigation.Apelido
+                    }).ToList();
+                }
+
+                var empresa = context.EmpresaUsuario
+                        .Include(r => r.IdusuarioNavigation).Where(r => r.Idusuario == user.IDUsuario && r.IsAtivado.Value).OrderBy(u => u.Idempresa).Select(r => new
+                        {
+                            r.Idempresa,
+                            Nome = r.IdempresaNavigation.Apelido
+                        }).ToList();
+
+                return empresa.Where(u => u.Nome.Normalize().Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+
         }
     }
 }

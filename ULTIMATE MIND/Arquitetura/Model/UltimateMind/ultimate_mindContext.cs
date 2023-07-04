@@ -20,6 +20,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual DbSet<Cliente> Cliente { get; set; }
         public virtual DbSet<Configuracao> Configuracao { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
+        public virtual DbSet<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual DbSet<GrupoPermissao> GrupoPermissao { get; set; }
         public virtual DbSet<Ponto> Ponto { get; set; }
         public virtual DbSet<Tela> Tela { get; set; }
@@ -30,15 +31,19 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=RG001156\\SQLEXPRESS;Database=ultimate_mind;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=186.250.240.35\\MSSQLSERVER2022,14337;Initial Catalog=ultimate_mind;Persist Security Info=True;User ID=utimid;Password=Uy1m4j&90;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("Relational:DefaultSchema", "utimid");
+
             modelBuilder.Entity<Atendimento>(entity =>
             {
                 entity.HasKey(e => e.Idatendimento);
+
+                entity.ToTable("Atendimento", "dbo");
 
                 entity.Property(e => e.Idatendimento).HasColumnName("IDAtendimento");
 
@@ -71,6 +76,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             {
                 entity.HasKey(e => e.Idcargo);
 
+                entity.ToTable("Cargo", "dbo");
+
                 entity.Property(e => e.Idcargo).HasColumnName("IDCargo");
 
                 entity.Property(e => e.NomeCargo)
@@ -82,6 +89,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             modelBuilder.Entity<Cliente>(entity =>
             {
                 entity.HasKey(e => e.Idcliente);
+
+                entity.ToTable("Cliente", "dbo");
 
                 entity.Property(e => e.Idcliente).HasColumnName("IDCliente");
 
@@ -120,6 +129,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             {
                 entity.HasKey(e => e.Idconfiguracao);
 
+                entity.ToTable("Configuracao", "dbo");
+
                 entity.Property(e => e.Idconfiguracao).HasColumnName("IDConfiguracao");
 
                 entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
@@ -142,6 +153,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             modelBuilder.Entity<Empresa>(entity =>
             {
                 entity.HasKey(e => e.Idempresa);
+
+                entity.ToTable("Empresa", "dbo");
 
                 entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
 
@@ -166,9 +179,36 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<EmpresaUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdempresaUsuario);
+
+                entity.ToTable("EmpresaUsuario", "dbo");
+
+                entity.Property(e => e.IdempresaUsuario).HasColumnName("IDEmpresaUsuario");
+
+                entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
+
+                entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
+
+                entity.HasOne(d => d.IdempresaNavigation)
+                    .WithMany(p => p.EmpresaUsuario)
+                    .HasForeignKey(d => d.Idempresa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EmpresaUsuario_Empresa");
+
+                entity.HasOne(d => d.IdusuarioNavigation)
+                    .WithMany(p => p.EmpresaUsuario)
+                    .HasForeignKey(d => d.Idusuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EmpresaUsuario_Usuario");
+            });
+
             modelBuilder.Entity<GrupoPermissao>(entity =>
             {
                 entity.HasKey(e => e.IdgrupoPermissao);
+
+                entity.ToTable("GrupoPermissao", "dbo");
 
                 entity.Property(e => e.IdgrupoPermissao).HasColumnName("IDGrupoPermissao");
 
@@ -189,6 +229,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             modelBuilder.Entity<Ponto>(entity =>
             {
                 entity.HasKey(e => e.Idponto);
+
+                entity.ToTable("Ponto", "dbo");
 
                 entity.Property(e => e.Idponto).HasColumnName("IDPonto");
 
@@ -215,6 +257,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             {
                 entity.HasKey(e => e.Idtela);
 
+                entity.ToTable("Tela", "dbo");
+
                 entity.Property(e => e.Idtela).HasColumnName("IDTela");
 
                 entity.Property(e => e.IdgrupoPermissao).HasColumnName("IDGrupoPermissao");
@@ -234,6 +278,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.HasKey(e => e.Idusuario);
+
+                entity.ToTable("Usuario", "dbo");
 
                 entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
 
@@ -312,6 +358,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
             modelBuilder.Entity<ValidacaoContraCheque>(entity =>
             {
                 entity.HasKey(e => e.IdvalidacaoContraCheque);
+
+                entity.ToTable("ValidacaoContraCheque", "dbo");
 
                 entity.Property(e => e.IdvalidacaoContraCheque).HasColumnName("IDValidacaoContraCheque");
 

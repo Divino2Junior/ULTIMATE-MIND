@@ -1,18 +1,4 @@
 ﻿
-<script src="/frameworks/datatable/datatables.min.js"></script>
-<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
-
-<link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="/frameworks/Select2/select2.min.css" />
-<link rel="stylesheet" href="/frameworks/jquery-confirm/dist/jquery-confirm.min.css" />
-<script src="/frameworks/JQuery/jQuery.min.js"></script>
-<script src="/frameworks/Select2/select2.min.js"></script>
-<script src="/frameworks/jquery-confirm/dist/jquery-confirm.min.js"></script>
-<script src="~/frameworks/jQuery-mask/jquery.mask.min.js"></script>
-<script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/popper.js"></script>
-<script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
-
-
 <!-- Modal -->
 <div class="modal fade" id="modalContratante" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -26,26 +12,13 @@
                 <div class="form-group">
                     <label for="contratoSelect">Contrato:</label>
                     <select class="form-control" style="width: 100%;" id="contratoSelect">
-                        <option value="opcao1">Opção 1</option>
-                        <option value="opcao2">Opção 2</option>
-                        <option value="opcao3">Opção 3</option>
-                        <option value="opcao4">Opção 4</option>
-                        <option value="opcao5">Opção 5</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary">OK</button>
+                <button type="button" class="btn btn-primary" onclick="salvarEmpresa();">OK</button>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-      $('#contratoSelect').select2({
-            dropdownParent: $('#modalContratante')
-      });
-    });
-</script>

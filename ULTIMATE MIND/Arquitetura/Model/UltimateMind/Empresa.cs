@@ -9,6 +9,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             Cliente = new HashSet<Cliente>();
             Configuracao = new HashSet<Configuracao>();
+            EmpresaUsuario = new HashSet<EmpresaUsuario>();
             GrupoPermissao = new HashSet<GrupoPermissao>();
             Usuario = new HashSet<Usuario>();
             ValidacaoContraCheque = new HashSet<ValidacaoContraCheque>();
@@ -27,6 +28,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
         public virtual ICollection<Cliente> Cliente { get; set; }
         public virtual ICollection<Configuracao> Configuracao { get; set; }
+        public virtual ICollection<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual ICollection<GrupoPermissao> GrupoPermissao { get; set; }
         public virtual ICollection<Usuario> Usuario { get; set; }
         public virtual ICollection<ValidacaoContraCheque> ValidacaoContraCheque { get; set; }

@@ -10,12 +10,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login/style.css">
     <link rel="stylesheet" href="/css/site.css" />
-    <script src="/frameworks/JQuery/jQuery.min.js"></script>
+    <link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/frameworks/Select2/select2.min.css" />
     <link rel="stylesheet" href="~/frameworks/jquery-confirm/css/jquery-confirm.css" />
+
+    <script src="/frameworks/JQuery/jQuery.min.js"></script>
+    <script src="/frameworks/Select2/select2.min.js"></script>
     <script src="~/frameworks/jquery-confirm/js/jquery-confirm.js"></script>
     <script src="~/frameworks/jQuery-mask/jquery.mask.min.js"></script>
-    <script type="text/javascript" src="/JsPagina/Login/Login.js"></script>
-    <script type="text/javascript" src="~/js/site.js"></script>
+    <script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/JsPagina/Login/Login.js"></script>
+    <script src="~/js/site.js"></script>
+
+ 
+
+    <!-- Restante do seu código -->
+
 
     <title>Amig Instalações</title>
 
@@ -60,6 +71,31 @@
 
     <div id="loading-overlay">
         <div class="loading-spinner"></div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalContratante">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Selecione a empresa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="contratoSelect">Empresa:</label>
+                        <select class="form-control" style="width: 100%;" id="contratoSelect">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarEmpresa();">OK</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
