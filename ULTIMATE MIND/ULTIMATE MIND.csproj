@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\css\NovaPasta\" />
     <Folder Include="wwwroot\css\ponto\" />
+    <Folder Include="wwwroot\Font-Awesome\NovaPasta\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
