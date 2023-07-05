@@ -5,9 +5,13 @@ $(document).ready(function () {
 
 function montarTela(colaborador) {
 
-    var fotoAtualizada = colaborador.foto + '?t=' + new Date().getTime();
-    // Preencha as informações do colaborador na tela
-    $("#fotoUsuario").attr("src", fotoAtualizada);
+    if (colaborador.foto) {
+        var fotoAtualizada = colaborador.foto + '?t=' + new Date().getTime();
+        $('#fotoUsuario').attr('src', fotoAtualizada);
+    } else {
+        // Se a foto não existe, exibir o ícone padrão
+        $('#fotoUsuario').attr('src', '/icons/homem-usuario.png');
+    }
     $(".matricula").text("Matrícula: " + colaborador.matricula);
     $(".nome").text(colaborador.nome);
     $(".cpf").text("CPF: " + colaborador.cpf);
@@ -15,3 +19,4 @@ function montarTela(colaborador) {
     $(".email").text("Email: " + colaborador.email);
     $(".funcao").text("Função: " + colaborador.funcao);
 }
+

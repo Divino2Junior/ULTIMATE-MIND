@@ -2,26 +2,6 @@
 
 $(document).ready(function () {
 
-    $('#contratoSelect').select2({
-        dropdownParent: $('#modalContratante'),
-        ajax: {
-            url: urlSite + 'Login/BuscarSelectEmpresa',
-            processResults: function (data) {
-                var dados = [];
-                $.each(data, function (index, item) {
-                    var array = {
-                        id: item.idempresa,
-                        text: item.nome
-                    }
-                    dados.push(array);
-                });
-                return {
-                    results: dados
-                };
-            }
-        }
-    });
-
     $('#txtcpf').mask('000.000.000-00');
     $("#txtcpf").on("input", function () {
         ocultarMensagemErro();

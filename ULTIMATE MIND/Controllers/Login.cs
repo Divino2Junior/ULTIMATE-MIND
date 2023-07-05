@@ -134,6 +134,8 @@ namespace ULTIMATE_MIND.Controllers
                 usuario.NomeFantasiaEmpresa = empresa.NomeFantasia;
                 new Util().AddClaim(this, Constantes.UsuarioLogado, JsonConvert.SerializeObject(usuario));
 
+                SetCookies(Constantes.EmpresaSelecionada, empresa.Idempresa.ToString());
+
                 return Ok();
 
             }
