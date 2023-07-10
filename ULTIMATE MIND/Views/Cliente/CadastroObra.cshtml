@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Cadastro de Obras";
+}
+
+<script src="/frameworks/datatable/datatables.min.js"></script>
+<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
+
+<script type="text/javascript" src="/JsPagina/Obra/CadastroObra.js"></script>
+<link rel="stylesheet" href="/css/cadastroUsuario/style.css">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC85r-6Rnm-5MmB_BJ_KbayCbLRBEEylbg&libraries=places"></script>
+
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+
+<div class="table-bordered">
+    <h1 class="text-centerador">Obras</h1>
+    <br>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="novaObra();" id="novo">
+            Adicionar
+        </button>
+    </div>
+
+    <table id="tableObra" class="table table-responsive">
+        <thead>
+            <tr class="titulo">
+                <th>Nome da Obra</th>
+                <th>Cliente</th>
+                <th>Status</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Cadastro de Obra -->
+<div class="modal" id="modalCadastroObra">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Adicionar Obra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="obraForm" method="POST" enctype="multipart/form-data">
+                    <div class="text-center mb-3">
+                        <label for="m-imagem-obra" class="col-form-label">Insira o QR Code abaixo</label>
+                        <div class="image-upload">
+                            <label for="m-imagem-input-obra" class="imagem-input">
+                                <img src="/icons/qr-code.png" id="m-imagem-preview-obra" class="">
+                                <span class="upload-icon"><i class="bi bi-camera-fill"></i></span>
+                            </label>
+                            <input hidden type="file" id="m-imagem-input-obra" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="selectCliente" class="col-form-label">Cliente</label>
+                                <select class="js-example-responsive" style="width: 100%" id="selectCliente">
+                                    <!-- Opções de clientes aqui -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtNomeObra" class="col-form-label">Nome da Obra</label>
+                                <input type="text" maxlength="50" class="form-control" id="txtNomeObra" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtEnderecoObra" class="col-form-label">Endereço</label>
+                                <input type="text" class="form-control" id="txtEnderecoObra" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-primary" onclick="consultarEnderecoObra()">Consultar</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="selectStatusObra" class="col-form-label">Status</label>
+                                <select class="js-example-responsive" style="width: 100%" id="selectStatusObra">
+                                    <option value="1">Ativo</option>
+                                    <option value="0">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtLatitudeObra" class="col-form-label">Latitude</label>
+                                <input type="text" class="form-control" id="txtLatitudeObra" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtLongitudeObra" class="col-form-label">Longitude</label>
+                                <input type="text" class="form-control" id="txtLongitudeObra" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mapa do Google Maps -->
+                    <div id="mapObra"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" id="btn-salvar-obra" onclick="salvarObra();">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>

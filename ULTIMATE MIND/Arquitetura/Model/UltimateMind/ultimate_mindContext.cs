@@ -22,6 +22,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual DbSet<Empresa> Empresa { get; set; }
         public virtual DbSet<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual DbSet<GrupoPermissao> GrupoPermissao { get; set; }
+        public virtual DbSet<Obra> Obra { get; set; }
         public virtual DbSet<Ponto> Ponto { get; set; }
         public virtual DbSet<Tela> Tela { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
@@ -224,6 +225,29 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasForeignKey(d => d.Idempresa)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GrupoPermissao_Empresa");
+            });
+
+            modelBuilder.Entity<Obra>(entity =>
+            {
+                entity.HasKey(e => e.Idobra);
+
+                entity.Property(e => e.Idobra).HasColumnName("IDObra");
+
+                entity.Property(e => e.Endereco)
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                entity.Property(e => e.Idcliente).HasColumnName("IDCliente");
+
+                entity.Property(e => e.NomeObra)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdclienteNavigation)
+                    .WithMany(p => p.Obra)
+                    .HasForeignKey(d => d.Idcliente)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Obra_Cliente");
             });
 
             modelBuilder.Entity<Ponto>(entity =>

@@ -130,9 +130,9 @@ namespace ULTIMATE_MIND.Arquitetura.Util
         {
             if (s.Trim() != "")
             {
-                if (s.Length > 10)
+                if (s.Length > 11)
                 {
-                    s = s.Substring(s.Length - 10);
+                    s = s.Substring(s.Length - 11);
                 }
                 return string.Format(@"({0:##}) {1:####-####}", long.Parse(s.Substring(0, 2)), long.Parse(s.Substring(2)));
             }

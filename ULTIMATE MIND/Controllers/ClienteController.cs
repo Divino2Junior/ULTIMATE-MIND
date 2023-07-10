@@ -28,6 +28,10 @@ namespace ULTIMATE_MIND.Controllers
         {
             return View();
         }
+        public IActionResult CadastroObra()
+        {
+            return View();
+        }
 
         public object BuscarClientes()
         {
