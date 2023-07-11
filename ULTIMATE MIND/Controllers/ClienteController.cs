@@ -371,5 +371,70 @@ namespace ULTIMATE_MIND.Controllers
                 return Erro(ex);
             }
         }
+
+        public object BuscarObras()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+
+                var obras = context.Obra.Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
+                    .Select(r => new
+                    {
+                        r.Idobra,
+                        NomeCliente = r.Idcliente + " - " + r.IdclienteNavigation.NomeCliente,
+                        Status = EnumStatusObra.Obtenha(r.Status),
+                        r.Endereco
+                    }).ToList();
+
+                return obras;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        //public object BuscarInfoCliente(int id)
+        //{
+        //    try
+        //    {
+        //        var context = new ultimate_mindContext();
+
+        //        var cliente = context.Cliente.Where(r => r.Idcliente == id).FirstOrDefault();
+
+        //        if (cliente == null)
+        //            return Erro("Cliente não encontrado!!");
+
+        //        var retorno = new ClienteDTO();
+
+        //        retorno.idcliente = cliente.Idcliente;
+        //        retorno.Nome = cliente.NomeCliente;
+        //        retorno.Cpf = cliente.Cpf == null ? "" : new Util().FormataCPF(cliente.Cpf);
+        //        retorno.Cpnj = cliente.Cnpj == null ? "" : new Util().FormataCNPJ(cliente.Cnpj);
+        //        retorno.Status = cliente.Status;
+        //        retorno.NomeStatus = EnumStatusCliente.Obtenha(retorno.Status);
+        //        retorno.Endereco = cliente.Endereco;
+        //        retorno.Longitude = cliente.Longitude.ToString();
+        //        retorno.Latitude = cliente.Latitude.ToString();
+        //        retorno.Telefone = cliente.Telefone == null ? "" : new Util().FormataTelefone(cliente.Telefone);
+        //        retorno.Email = cliente.Email ?? "";
+
+        //        var caminhoFoto = Path.Combine(CaminhoQrCodeCliente, $"{cliente.Idcliente}.jpg");
+
+        //        if (System.IO.File.Exists(caminhoFoto))
+        //        {
+        //            retorno.UrlFoto = "/QrCodeCliente/" + $"{cliente.Idcliente}.jpg";
+        //        }
+
+        //        return retorno;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Erro(ex);
+        //    }
+        //}
     }
 }
