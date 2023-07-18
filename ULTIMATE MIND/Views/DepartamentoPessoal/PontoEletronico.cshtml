@@ -37,11 +37,12 @@
     <div class="title" style="text-align: center; font-weight: bold;">Data: </div>
     <div class="row">
         <div class="col-12 text-center">
-            <div class="card mb-3 mt-4 my-div mx-auto">
+            <div class="card mb-3 mt-4 my-div mx-auto" id="cardInicioDia">
                 <div class="card-header">Início do Dia</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <input type="time" class="form-control" id="entrada1" placeholder="Informe a hora de entrada">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada1">Início do Dia</button>
+                        <input type="time" class="form-control input-time d-none" id="entrada1" placeholder="Informe a hora de entrada">
                     </div>
                 </div>
             </div>
@@ -50,11 +51,12 @@
 
     <div class="row">
         <div class="col-12 text-center">
-            <div class="card mb-3 mt-4 my-div mx-auto">
+            <div class="card mb-3 mt-4 my-div mx-auto" id="cardInicioAlmoco">
                 <div class="card-header">Início do Almoço</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <input type="time" class="form-control" id="saida1" placeholder="Informe a hora de saída">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#saida1">Início do Almoço</button>
+                        <input type="time" class="form-control input-time d-none" id="saida1" placeholder="Informe a hora de saída">
                     </div>
                 </div>
             </div>
@@ -63,11 +65,12 @@
 
     <div class="row">
         <div class="col-12 text-center">
-            <div class="card mb-3 mt-4 my-div mx-auto">
+            <div class="card mb-3 mt-4 my-div mx-auto" id="cardFimAlmoco">
                 <div class="card-header">Fim Almoço</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <input type="time" class="form-control" id="entrada2" placeholder="Informe a hora de entrada">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada2">Fim Almoço</button>
+                        <input type="time" class="form-control input-time d-none" id="entrada2" placeholder="Informe a hora de entrada">
                     </div>
                 </div>
             </div>
@@ -76,11 +79,12 @@
 
     <div class="row">
         <div class="col-12 text-center">
-            <div class="card mb-3 mt-4 my-div mx-auto">
+            <div class="card mb-3 mt-4 my-div mx-auto" id="cardFimDia">
                 <div class="card-header">Fim Dia</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <input type="time" class="form-control" id="saida2" placeholder="Informe a hora de saída">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#saida2">Fim Dia</button>
+                        <input type="time" class="form-control input-time d-none" id="saida2" placeholder="Informe a hora de saída">
                     </div>
                 </div>
             </div>
@@ -100,103 +104,20 @@
         </div>
     </div>
 
-    @*Teste com o botão*@
-
-        <div class="title" style="text-align: center; font-weight: bold;">Data: </div>
     <div class="row">
         <div class="col-12 text-center">
-            <button class="btn btn-primary toggle-input" data-bs-target="#entrada1">Início do Dia</button>
             <div class="card mb-3 mt-4 my-div mx-auto">
-                <div class="card-header">Início do Dia</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="time" class="form-control input-time" id="entrada1" placeholder="Informe a hora de entrada">
-                    </div>
-                </div>
+                <!-- Aumentei a margem inferior para criar mais espaço -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#folhaDePontoModal"
+                        id="historico">
+                    Histórico
+                </button>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-12 text-center">
-            <button class="btn btn-primary toggle-input" data-bs-target="#saida1">Início do Almoço</button>
-            <div class="card mb-3 mt-4 my-div mx-auto">
-                <div class="card-header">Início do Almoço</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="time" class="form-control input-time" id="saida1" placeholder="Informe a hora de saída">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12 text-center">
-            <button class="btn btn-primary toggle-input" data-bs-target="#entrada2">Fim Almoço</button>
-            <div class="card mb-3 mt-4 my-div mx-auto">
-                <div class="card-header">Fim Almoço</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="time" class="form-control input-time" id="entrada2" placeholder="Informe a hora de entrada">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12 text-center">
-            <button class="btn btn-primary toggle-input" data-bs-target="#saida2">Fim Dia</button>
-            <div class="card mb-3 mt-4 my-div mx-auto">
-                <div class="card-header">Fim Dia</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <input type="time" class="form-control input-time" id="saida2" placeholder="Informe a hora de saída">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    @*Teste com o modal*@
-
-    <div class="title" style="text-align: center; font-weight: bold;">Data: </div>
-    <div class="row">
-        <div class="col-12 text-center">
-            <button class="btn btn-primary" data-bs-target="#modalEntradaDia">Início do Dia</button>
-            <div id="modalEntradaDia" class="modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Início do Dia</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="time" class="form-control" placeholder="Informe a hora de entrada">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
-                            <button type="button" class="btn btn-primary">Salvar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
- 
-
-    <div class="btn-wrapper text-center mb-4">
-        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#folhaDePontoModal"
-                id="historico">
-            Historico
-        </button>
-    </div>
-
 </div>
+
+
 
 <div class="modal fade" id="folhaDePontoModal" aria-labelledby="folhaDePontoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">

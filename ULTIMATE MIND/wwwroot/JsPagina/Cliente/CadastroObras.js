@@ -8,23 +8,44 @@ $(document).ready(function () {
 
 
     // Chama a função para carregar a API do Google Maps quando o modal é aberto
-    $('#modalCadastroCliente').on('shown.bs.modal', function () {
+    $('#modalCadastroObra').on('shown.bs.modal', function () {
         loadGoogleMaps();
     });
 
-    $('#m-imagem-input').on('change', function (e) {
+    $('#m-imagem-input-obra').on('change', function (e) {
         var file = e.target.files[0];
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            $('#m-imagem-preview').attr('src', e.target.result);
+            $('#m-imagem-preview-obra').attr('src', e.target.result);
         }
 
         reader.readAsDataURL(file);
     });
 
-    $('#selectStatus').select2({
-        dropdownParent: $('#modalCadastroCliente')
+    $('#selectStatusObra').select2({
+        dropdownParent: $('#modalCadastroObra')
+    });
+
+    $('#selectCliente').select2({
+        dropdownParent: $('#modalCadastroObra'),
+        width: 'resolve',
+        ajax: {
+            url: urlSite + 'Cliente/BuscarSelectCliente',
+            processResults: function (data) {
+                var dados = [];
+                $.each(data, function (index, item) {
+                    var array = {
+                        id: item.idcliente,
+                        text: item.nome
+                    }
+                    dados.push(array);
+                });
+                return {
+                    results: dados
+                };
+            }
+        }
     });
 
     Post("Cliente/BuscarObras", montarTela, Erro);
@@ -52,8 +73,8 @@ function initMap() {
         var latLng = event.latLng;
         var confirmar = confirm("Deseja salvar a localização selecionada?");
         if (confirmar) {
-            document.getElementById('txtLatitude').value = latLng.lat();
-            document.getElementById('txtLongitude').value = latLng.lng();
+            document.getElementById('txtLatitudeObra').value = latLng.lat();
+            document.getElementById('txtLongitudeObra').value = latLng.lng();
         }
     });
 }
@@ -87,6 +108,8 @@ function montarTela(retorno) {
 
         tableObra.clear();
 
+        IDObra = retorno.idobra
+
         $.each(retorno, function (index, item) {
             tableObra.row.add([
                 item.nomeCliente,
@@ -115,68 +138,69 @@ function montarModalObra(retorno) {
     if (retorno != null && retorno != undefined) {
 
         IDObra = retorno.idobra;
-
-        $('#txtLatitude').val(retorno.latitude);
-        $('#txtLongitude').val(retorno.longitude);
-        $('#txtEndereco').val(retorno.endereco);
+        $('#txtNomeObra').val(retorno.nomeObra);
+        $('#txtLatitudeObra').val(retorno.latitude);
+        $('#txtLongitudeObra').val(retorno.longitude);
+        $('#txtEnderecoObra').val(retorno.endereco);
 
         var option = new Option(retorno.nomeStatus, retorno.status, true, true);
-        $('#selectStatus').append(option).trigger('change');
+        $('#selectStatusObra').append(option).trigger('change');
 
         var option = new Option(retorno.nomeCliente, retorno.idcliente, true, true);
         $('#selectCliente').append(option).trigger('change');
 
         if (retorno.urlFoto) {
             var fotoAtualizada = retorno.urlFoto + '?t=' + new Date().getTime();
-            $('#m-imagem-preview').attr('src', fotoAtualizada);
+            $('#m-imagem-preview-obra').attr('src', fotoAtualizada);
         } else {
             // Se a foto não existe, exibir o ícone padrão
-            $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
+            $('#m-imagem-preview-obra').attr('src', '/images/qr-code.png');
         }
     }
 
     $("#modalCadastroObra").modal('show');
 }
 
-function novoCliente() {
+function NovaObra() {
 
     idUsuario = 0;
     limparModal();
     $("#modalCadastroObra").modal('show');
 }
 
-function salvarCliente() {
+function salvarObra() {
 
     if (isEmptyOrNull($("#selectCliente").val())) {
         Alerta("Informe o Cliente");
         return;
     }
-    if (isEmptyOrNull($("#selectStatus").val())) {
+    if (isEmptyOrNull($("#selectStatusObra").val())) {
         Alerta("Informe o Status");
         return;
     }
-    if (isEmptyOrNull($("#txtLongitude").val())) {
+    if (isEmptyOrNull($("#txtLongitudeObra").val())) {
         Alerta("Informe a Longitude");
         return;
     }
-    if (isEmptyOrNull($("#txtLatitude").val())) {
+    if (isEmptyOrNull($("#txtLatitudeObra").val())) {
         Alerta("Informe a Latitude");
         return;
     }
 
-    if (isEmptyOrNull($("#txtEndereco").val())) {
+    if (isEmptyOrNull($("#txtEnderecoObra").val())) {
         Alerta("Informe o Endereço");
         return;
     }
 
     var formData = new FormData();
 
-    formData.append('idcliente', idCliente);
+    formData.append('Idobra', IDObra);
     formData.append('NomeObra', $('#txtNomeObra').val());
-    formData.append('Endereco', $('#txtEndereco').val());
-    formData.append('Status', $('#selectStatus').val());
-    formData.append('Latitude', $('#txtLatitudeO').val());
-    formData.append('Longitude', $('#txtLongitude').val());
+    formData.append('Endereco', $('#txtEnderecoObra').val());
+    formData.append('Idcliente', $('#selectCliente').val());
+    formData.append('Status', $('#selectStatusObra').val());
+    formData.append('Latitude', $('#txtLatitudeObra').val());
+    formData.append('Longitude', $('#txtLongitudeObra').val());
 
     // Verifique se uma imagem foi selecionada
     var imagemInput = document.getElementById('m-imagem-input-obra');
@@ -186,7 +210,7 @@ function salvarCliente() {
 
     // Faça a requisição AJAX para o servidor
     $.ajax({
-        url: '/Obra/SalvarObra',
+        url: '/Cliente/SalvarObra',
         type: 'POST',
         data: formData,
         contentType: false,
@@ -196,8 +220,7 @@ function salvarCliente() {
             limparModal();
             $.alert("Obra cadastrada com sucesso!");
 
-            // Chame a função para atualizar a tabela de obras
-            montarTela();
+            Post("Cliente/BuscarObras", montarTela, Erro);
         },
         error: function (xhr, status, error) {
             $.alert("Erro: " + error);
@@ -207,42 +230,39 @@ function salvarCliente() {
 }
 
 function limparModal() {
-    $('#txtNomeCliente').val("");
-    $('#txtCpf').val("");
-    $('#txtCnpj').val("");
-    $('#txtTelefone').val("");
-    $('#m-email').val("");
-    $('#txtLatitude').val("");
-    $('#txtLongitude').val("");
-    $('#txtEndereco').val("");
-    $("#selectStatus").val(null).trigger('change');
-    $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
+    $('#txtNomeObra').val("");
+    $('#txtEnderecoObra').val("");
+    $('#txtLatitudeObra').val("");
+    $('#txtLongitudeObra').val("");
+    $("#selectStatusObra").val(null).trigger('change');
+    $("#selectCliente").val(null).trigger('change');
+    $('#m-imagem-preview-obra').attr('src', '/images/qr-code.png');
 }
 
-function consultarEndereco() {
-    var endereco = document.getElementById('txtEndereco').value;
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: endereco }, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-            if (results.length > 0) {
-                var location = results[0].geometry.location;
-                map.setCenter(location);
-                map.setZoom(15);
-                var marker = new google.maps.Marker({
-                    position: location,
-                    map: map
-                });
-                var confirmar = confirm("Deseja salvar a localização encontrada?");
-                if (confirmar) {
-                    document.getElementById('txtLatitude').value = location.lat();
-                    document.getElementById('txtLongitude').value = location.lng();
-                }
-            } else {
-                alert("Endereço não encontrado.");
-            }
-        } else {
-            alert("Ocorreu um erro ao consultar o endereço.");
-        }
-    });
+//function consultarEnderecoObra() {
+//    var endereco = document.getElementById('txtEnderecoObra').value;
+//    var geocoder = new google.maps.Geocoder();
+//    geocoder.geocode({ address: endereco }, function (results, status) {
+//        if (status === google.maps.GeocoderStatus.OK) {
+//            if (results.length > 0) {
+//                var location = results[0].geometry.location;
+//                map.setCenter(location);
+//                map.setZoom(15);
+//                var marker = new google.maps.Marker({
+//                    position: location,
+//                    map: map
+//                });
+//                var confirmar = confirm("Deseja salvar a localização encontrada?");
+//                if (confirmar) {
+//                    document.getElementById('txtLatitudeO').value = location.lat();
+//                    document.getElementById('txtLongitude').value = location.lng();
+//                }
+//            } else {
+//                alert("Endereço não encontrado.");
+//            }
+//        } else {
+//            alert("Ocorreu um erro ao consultar o endereço.");
+//        }
+//    });
 
-}
+//}

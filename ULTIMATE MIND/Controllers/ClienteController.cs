@@ -40,8 +40,8 @@ namespace ULTIMATE_MIND.Controllers
                 var context = new ultimate_mindContext();
                 var idEmpresa = GetIDEmpresaLogada();
 
-                var clientes = context.Cliente.Where(r=> r.Idempresa == idEmpresa).OrderBy(r=> r.Idcliente)
-                    .Select(r=> new 
+                var clientes = context.Cliente.Where(r => r.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
+                    .Select(r => new
                     {
                         r.Idcliente,
                         Apelido = r.NomeCliente,
@@ -52,7 +52,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 return clientes;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
@@ -63,7 +63,7 @@ namespace ULTIMATE_MIND.Controllers
             try
             {
                 var context = new ultimate_mindContext();
-                
+
                 var cliente = context.Cliente.Where(r => r.Idcliente == id).FirstOrDefault();
 
                 if (cliente == null)
@@ -74,7 +74,7 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.idcliente = cliente.Idcliente;
                 retorno.Nome = cliente.NomeCliente;
                 retorno.Cpf = cliente.Cpf == null ? "" : new Util().FormataCPF(cliente.Cpf);
-                retorno.Cpnj = cliente.Cnpj == null ? "" :new Util().FormataCNPJ(cliente.Cnpj);
+                retorno.Cpnj = cliente.Cnpj == null ? "" : new Util().FormataCNPJ(cliente.Cnpj);
                 retorno.Status = cliente.Status;
                 retorno.NomeStatus = EnumStatusCliente.Obtenha(retorno.Status);
                 retorno.Endereco = cliente.Endereco;
@@ -93,7 +93,7 @@ namespace ULTIMATE_MIND.Controllers
                 return retorno;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
@@ -153,7 +153,7 @@ namespace ULTIMATE_MIND.Controllers
                     }
                     if (clienteExistente.Telefone != new Util().RemoveFormatacaoTelefone(cliente.Telefone))
                     {
-                        clienteExistente.Telefone =new Util().RemoveFormatacaoTelefone(cliente.Telefone);
+                        clienteExistente.Telefone = new Util().RemoveFormatacaoTelefone(cliente.Telefone);
                         isAlteracao = true;
                     }
                     if (clienteExistente.Email != cliente.Email)
@@ -275,13 +275,13 @@ namespace ULTIMATE_MIND.Controllers
                 if (cliente == null)
                     throw new Exception("Cliente não cadastrado");
 
-                
+
                 var atendimento = context.Atendimento.Where(r => r.Idusuario == user.IDUsuario
                 && r.Idcliente == id && r.DataAtendimento == DateTime.Now.Date && r.FimAtendimento == null).FirstOrDefault();
 
                 var novoAtendimento = new Atendimento();
                 if (atendimento == null)
-                {                   
+                {
                     novoAtendimento.Idusuario = user.IDUsuario;
                     novoAtendimento.Idcliente = cliente.Idcliente;
                     novoAtendimento.DataAtendimento = DateTime.Now.Date;
@@ -293,7 +293,7 @@ namespace ULTIMATE_MIND.Controllers
                     context.SaveChanges();
                 }
                 else
-                    throw new Exception("Já existe atendimento hoje para este cliente");               
+                    throw new Exception("Já existe atendimento hoje para este cliente");
 
                 var caminhoFoto = Path.Combine(CaminhoQrCodeCliente, $"{cliente.Idcliente}.jpg");
 
@@ -306,7 +306,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 return null;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
@@ -323,7 +323,7 @@ namespace ULTIMATE_MIND.Controllers
                 var atendimento = context.Atendimento
                     .Include(r => r.IdclienteNavigation)
                     .Where(r => r.Idusuario == user.IDUsuario && r.IdclienteNavigation.Idempresa == idempresa && r.DataAtendimento == DateTime.Now.Date)
-                    .Select(r=> new 
+                    .Select(r => new
                     {
                         r.Idatendimento,
                         r.Idcliente,
@@ -335,7 +335,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 return atendimento;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
@@ -379,11 +379,12 @@ namespace ULTIMATE_MIND.Controllers
                 var context = new ultimate_mindContext();
                 var idEmpresa = GetIDEmpresaLogada();
 
-                var obras = context.Obra.Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
+                var obras = context.Obra
+                    .Include(r=> r.IdclienteNavigation).Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
                     .Select(r => new
                     {
                         r.Idobra,
-                        NomeCliente = r.Idcliente + " - " + r.IdclienteNavigation.NomeCliente,
+                        NomeCliente = r.IdclienteNavigation.NomeCliente,
                         Status = EnumStatusObra.Obtenha(r.Status),
                         r.Endereco
                     }).ToList();
@@ -396,45 +397,135 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
-        //public object BuscarInfoCliente(int id)
-        //{
-        //    try
-        //    {
-        //        var context = new ultimate_mindContext();
+        public object BuscarInfoObra(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
 
-        //        var cliente = context.Cliente.Where(r => r.Idcliente == id).FirstOrDefault();
+                var obra = context.Obra.Include(r=> r.IdclienteNavigation). Where(r => r.Idobra == id).FirstOrDefault();
 
-        //        if (cliente == null)
-        //            return Erro("Cliente não encontrado!!");
+                if (obra == null)
+                    return Erro("Cliente não encontrado!!");
 
-        //        var retorno = new ClienteDTO();
+                var retorno = new ObraDTO();
 
-        //        retorno.idcliente = cliente.Idcliente;
-        //        retorno.Nome = cliente.NomeCliente;
-        //        retorno.Cpf = cliente.Cpf == null ? "" : new Util().FormataCPF(cliente.Cpf);
-        //        retorno.Cpnj = cliente.Cnpj == null ? "" : new Util().FormataCNPJ(cliente.Cnpj);
-        //        retorno.Status = cliente.Status;
-        //        retorno.NomeStatus = EnumStatusCliente.Obtenha(retorno.Status);
-        //        retorno.Endereco = cliente.Endereco;
-        //        retorno.Longitude = cliente.Longitude.ToString();
-        //        retorno.Latitude = cliente.Latitude.ToString();
-        //        retorno.Telefone = cliente.Telefone == null ? "" : new Util().FormataTelefone(cliente.Telefone);
-        //        retorno.Email = cliente.Email ?? "";
+                retorno.Idobra = obra.Idobra;
+                retorno.Idcliente = obra.Idcliente;
+                retorno.NomeCliente = obra.IdclienteNavigation.NomeCliente;
+                retorno.Status = obra.Status;
+                retorno.NomeStatus = EnumStatusCliente.Obtenha(retorno.Status);
+                retorno.Endereco = obra.Endereco;
+                retorno.Longitude = obra.Longitude.ToString();
+                retorno.Latitude = obra.Latitude.ToString();
+                retorno.NomeObra = obra.NomeObra;
 
-        //        var caminhoFoto = Path.Combine(CaminhoQrCodeCliente, $"{cliente.Idcliente}.jpg");
+                var caminhoFoto = Path.Combine(CaminhoQrCodObra, $"{obra.Idobra}.jpg");
 
-        //        if (System.IO.File.Exists(caminhoFoto))
-        //        {
-        //            retorno.UrlFoto = "/QrCodeCliente/" + $"{cliente.Idcliente}.jpg";
-        //        }
+                if (System.IO.File.Exists(caminhoFoto))
+                {
+                    retorno.UrlFoto = "/QrCodeObra/" + $"{obra.Idcliente}.jpg";
+                }
 
-        //        return retorno;
+                return retorno;
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Erro(ex);
-        //    }
-        //}
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public IActionResult SalvarObra(ObraDTO obra)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+
+                if (obra.Idobra > 0)
+                {
+                    var obraExistente = context.Obra.FirstOrDefault(o => o.Idobra == obra.Idobra);
+
+                    if (obraExistente == null)
+                        return Erro("Obra não encontrada!");
+
+                    // Verifique se houve alteração nos campos
+                    var isAlteracao = false;
+
+                    if (obraExistente.NomeObra != obra.NomeObra)
+                    {
+                        obraExistente.NomeObra = obra.NomeObra;
+                        isAlteracao = true;
+                    }
+                    if (obraExistente.Endereco != obra.Endereco)
+                    {
+                        obraExistente.Endereco = obra.Endereco;
+                        isAlteracao = true;
+                    }
+                    if (obraExistente.Status != obra.Status)
+                    {
+                        obraExistente.Status = obra.Status;
+                        isAlteracao = true;
+                    }
+                    if (obraExistente.Latitude != new Util().GetCoordenada(obra.Latitude))
+                    {
+                        obraExistente.Latitude = new Util().GetCoordenada(obra.Latitude);
+                        isAlteracao = true;
+                    }
+                    if (obraExistente.Longitude != new Util().GetCoordenada(obra.Longitude))
+                    {
+                        obraExistente.Longitude = new Util().GetCoordenada(obra.Longitude);
+                        isAlteracao = true;
+                    }
+
+                    if (isAlteracao)
+                    {
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    var novaObra = new Obra
+                    {
+                        Idcliente = obra.Idcliente,
+                        NomeObra = obra.NomeObra,
+                        Endereco = obra.Endereco,
+                        Status = obra.Status,
+                        Latitude = new Util().GetCoordenada(obra.Latitude),
+                        Longitude = new Util().GetCoordenada(obra.Longitude)
+                    };
+
+                    context.Obra.Add(novaObra);
+                    context.SaveChanges();
+
+                    // Verifique se uma imagem foi enviada
+                    if (obra.ImagemObra != null && obra.ImagemObra.Length > 0)
+                    {
+                        var nomeArquivo = $"{novaObra.Idobra}.jpg";
+                        var caminhoCompleto = this.CaminhoQrCodObra + nomeArquivo;
+
+                        // Verifique se o arquivo já existe
+                        if (System.IO.File.Exists(caminhoCompleto))
+                        {
+                            // Se o arquivo existir, exclua-o antes de salvar o novo
+                            System.IO.File.Delete(caminhoCompleto);
+                        }
+
+                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                        {
+                            obra.ImagemObra.CopyTo(stream);
+                        }
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
     }
 }

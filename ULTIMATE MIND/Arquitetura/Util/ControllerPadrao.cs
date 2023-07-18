@@ -82,6 +82,17 @@ namespace ULTIMATE_MIND.Arquitetura.Util
                 return local;
             }
         }
+        public string CaminhoQrCodObra
+        {
+            get
+            {
+                var local = HostingEnvironment.WebRootPath + "/QrCodeObra/";
+                if (!Directory.Exists(local))
+                    Directory.CreateDirectory(local);
+
+                return local;
+            }
+        }
         public IActionResult Erro(Exception e)
         {
             Response.StatusCode = 300;
