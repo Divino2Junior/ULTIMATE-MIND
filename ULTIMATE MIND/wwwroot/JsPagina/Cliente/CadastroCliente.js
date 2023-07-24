@@ -17,29 +17,6 @@ $(document).ready(function () {
         loadGoogleMaps();
     });
 
-    $('#m-imagem-input').on('change', function (e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            $('#m-imagem-preview').attr('src', e.target.result);
-        }
-
-        reader.readAsDataURL(file);
-    });
-
-    $('#switch-input').on('change', function () {
-        var isPdf = $(this).prop('checked');
-
-        if (isPdf) {
-            $('#m-imagem-input').attr('accept', 'application/pdf');
-        } else {
-            $('#m-imagem-input').attr('accept', 'image/*');
-        }
-    });
-
-
-
     $('#selectStatus').select2({
         dropdownParent: $('#modalCadastroCliente')
     });
@@ -129,14 +106,6 @@ function montarModalCliente(retorno) {
 
         var option = new Option(retorno.nomeStatus, retorno.status, true, true);
         $('#selectStatus').append(option).trigger('change');
-
-        if (retorno.urlFoto) {
-            var fotoAtualizada = retorno.urlFoto + '?t=' + new Date().getTime();
-            $('#m-imagem-preview').attr('src', fotoAtualizada);
-        } else {
-            // Se a foto não existe, exibir o ícone padrão
-            $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
-        }
     }
 
     $("#modalCadastroCliente").modal('show');
@@ -176,13 +145,6 @@ function salvarCliente() {
     formData.append('Longitude', $('#txtLongitude').val());
     formData.append('Endereco', $('#txtEndereco').val());
     formData.append('Status', $('#selectStatus').val());
-
-    // Verifique se uma imagem foi selecionada
-    var imagemInput = document.getElementById('m-imagem-input');
-    if (imagemInput.files.length > 0) {
-        formData.append('Imagem', imagemInput.files[0]);
-    }
-
     // Faça a requisição AJAX para o servidor
     $.ajax({
         url: '/Cliente/SalvarCliente',
@@ -213,5 +175,4 @@ function limparModal() {
     $('#txtLongitude').val("");
     $('#txtEndereco').val("");
     $("#selectStatus").val(null).trigger('change');
-    $('#m-imagem-preview').attr('src', '/icons/homem-usuario.png');
 }

@@ -83,13 +83,6 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.Telefone = cliente.Telefone == null ? "" : new Util().FormataTelefone(cliente.Telefone);
                 retorno.Email = cliente.Email ?? "";
 
-                var caminhoFoto = Path.Combine(CaminhoQrCodeCliente, $"{cliente.Idcliente}.jpg");
-
-                if (System.IO.File.Exists(caminhoFoto))
-                {
-                    retorno.UrlFoto = "/QrCodeCliente/" + $"{cliente.Idcliente}.jpg";
-                }
-
                 return retorno;
 
             }
@@ -121,12 +114,12 @@ namespace ULTIMATE_MIND.Controllers
                         clienteExistente.NomeCliente = cliente.Nome;
                         isAlteracao = true;
                     }
-                    if (clienteExistente.Cpf != cliente.Cpf)
+                    if (cliente.Cpf != null && clienteExistente.Cpf != new Util().RemoveFormatacaoCPF(cliente.Cpf))
                     {
                         clienteExistente.Cpf = new Util().RemoveFormatacaoCPF(cliente.Cpf);
                         isAlteracao = true;
                     }
-                    if (clienteExistente.Cnpj != cliente.Cpnj)
+                    if (cliente.Cpnj != null && clienteExistente.Cnpj != new Util().RemoveFormatacaoCNPJ(cliente.Cpnj))
                     {
                         clienteExistente.Cnpj = new Util().RemoveFormatacaoCNPJ(cliente.Cpnj);
                         isAlteracao = true;
@@ -141,17 +134,17 @@ namespace ULTIMATE_MIND.Controllers
                         clienteExistente.Endereco = cliente.Endereco;
                         isAlteracao = true;
                     }
-                    if (clienteExistente.Latitude != new Util().GetCoordenada(cliente.Latitude))
+                    if (cliente.Latitude != null && clienteExistente.Latitude != new Util().GetCoordenada(cliente.Latitude))
                     {
                         clienteExistente.Latitude = new Util().GetCoordenada(cliente.Latitude);
                         isAlteracao = true;
                     }
-                    if (clienteExistente.Longitude != new Util().GetCoordenada(cliente.Longitude))
+                    if (cliente.Longitude != null && clienteExistente.Longitude != new Util().GetCoordenada(cliente.Longitude))
                     {
                         clienteExistente.Longitude = new Util().GetCoordenada(cliente.Longitude);
                         isAlteracao = true;
                     }
-                    if (clienteExistente.Telefone != new Util().RemoveFormatacaoTelefone(cliente.Telefone))
+                    if (cliente.Telefone != null && clienteExistente.Telefone != new Util().RemoveFormatacaoTelefone(cliente.Telefone))
                     {
                         clienteExistente.Telefone = new Util().RemoveFormatacaoTelefone(cliente.Telefone);
                         isAlteracao = true;
@@ -160,23 +153,6 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         clienteExistente.Email = cliente.Email;
                         isAlteracao = true;
-                    }
-                    if (cliente.Imagem != null && cliente.Imagem.Length > 0)
-                    {
-                        var nomeArquivo = $"{cliente.idcliente}.jpg";
-                        var caminhoCompleto = this.CaminhoQrCodeCliente + nomeArquivo;
-
-                        // Verifique se o arquivo já existe
-                        if (System.IO.File.Exists(caminhoCompleto))
-                        {
-                            // Se o arquivo existir, exclua-o antes de salvar o novo
-                            System.IO.File.Delete(caminhoCompleto);
-                        }
-
-                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
-                        {
-                            cliente.Imagem.CopyTo(stream);
-                        }
                     }
 
                     if (isAlteracao)
@@ -191,36 +167,18 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         NomeCliente = cliente.Nome,
                         Idempresa = idEmpresa,
-                        Cpf = new Util().RemoveFormatacaoCPF(cliente.Cpf),
-                        Cnpj = new Util().RemoveFormatacaoCNPJ(cliente.Cpnj),
+                        Cpf = cliente.Cpf == null? null : new Util().RemoveFormatacaoCPF(cliente.Cpf),
+                        Cnpj = cliente.Cpnj == null ? null : new Util().RemoveFormatacaoCNPJ(cliente.Cpnj),
                         Status = cliente.Status,
                         Endereco = cliente.Endereco,
-                        Latitude = new Util().GetCoordenada(cliente.Latitude),
-                        Longitude = new Util().GetCoordenada(cliente.Longitude),
-                        Telefone = new Util().RemoveFormatacaoTelefone(cliente.Telefone),
+                        Latitude = cliente.Latitude == null ? 0.0 : new Util().GetCoordenada(cliente.Latitude),
+                        Longitude = cliente.Longitude == null ? 0.0 : new Util().GetCoordenada(cliente.Longitude),
+                        Telefone = cliente.Telefone == null ? null : new Util().RemoveFormatacaoTelefone(cliente.Telefone),
                         Email = cliente.Email
                     };
 
                     context.Cliente.Add(novoCliente);
                     context.SaveChanges();
-
-                    if (cliente.Imagem != null && cliente.Imagem.Length > 0)
-                    {
-                        var nomeArquivo = $"{novoCliente.Idcliente}.jpg";
-                        var caminhoCompleto = this.CaminhoQrCodeCliente + nomeArquivo;
-
-                        // Verifique se o arquivo já existe
-                        if (System.IO.File.Exists(caminhoCompleto))
-                        {
-                            // Se o arquivo existir, exclua-o antes de salvar o novo
-                            System.IO.File.Delete(caminhoCompleto);
-                        }
-
-                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
-                        {
-                            cliente.Imagem.CopyTo(stream);
-                        }
-                    }
                 }
 
                 return Ok();
@@ -420,13 +378,6 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.Latitude = obra.Latitude.ToString();
                 retorno.NomeObra = obra.NomeObra;
 
-                var caminhoFoto = Path.Combine(CaminhoQrCodObra, $"{obra.Idobra}.jpg");
-
-                if (System.IO.File.Exists(caminhoFoto))
-                {
-                    retorno.UrlFoto = "/QrCodeObra/" + $"{obra.Idcliente}.jpg";
-                }
-
                 return retorno;
 
             }
@@ -498,25 +449,6 @@ namespace ULTIMATE_MIND.Controllers
 
                     context.Obra.Add(novaObra);
                     context.SaveChanges();
-
-                    // Verifique se uma imagem foi enviada
-                    if (obra.ImagemObra != null && obra.ImagemObra.Length > 0)
-                    {
-                        var nomeArquivo = $"{novaObra.Idobra}.jpg";
-                        var caminhoCompleto = this.CaminhoQrCodObra + nomeArquivo;
-
-                        // Verifique se o arquivo já existe
-                        if (System.IO.File.Exists(caminhoCompleto))
-                        {
-                            // Se o arquivo existir, exclua-o antes de salvar o novo
-                            System.IO.File.Delete(caminhoCompleto);
-                        }
-
-                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
-                        {
-                            obra.ImagemObra.CopyTo(stream);
-                        }
-                    }
                 }
 
                 return Ok();

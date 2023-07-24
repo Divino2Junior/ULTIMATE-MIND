@@ -188,7 +188,8 @@ namespace ULTIMATE_MIND.Arquitetura.Util
 
             novoValor += pValor.Replace("-", "").Replace("+", "").Replace(" ", "");
 
-            return float.Parse(novoValor, new CultureInfo("pt-Br"));
+            return float.Parse(novoValor, new CultureInfo("en-US"));
         }
+
     }
 }

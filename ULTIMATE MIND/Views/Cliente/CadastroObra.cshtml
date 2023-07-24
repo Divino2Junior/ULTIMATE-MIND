@@ -62,16 +62,6 @@
             </div>
             <div class="modal-body">
                 <form id="obraForm" method="POST" enctype="multipart/form-data">
-                    <div class="text-center mb-3">
-                        <label for="m-imagem-obra" class="col-form-label">Insira o QR Code abaixo</label>
-                        <div class="image-upload">
-                            <label for="m-imagem-input-obra" class="imagem-input">
-                                <img src="/images/qr-code.png" id="m-imagem-preview-obra" class="">
-                                <span class="upload-icon"><i class="bi bi-camera-fill"></i></span>
-                            </label>
-                            <input hidden type="file" id="m-imagem-input-obra" accept="image/*">
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -121,12 +111,7 @@
                                 <input type="text" class="form-control" id="txtEnderecoObra" />
                             </div>
                         </div>
-@*                        <div class="col" style="padding-top:18px;">
-                            <button type="button" class="btn btn-primary" onclick="consultarEnderecoObra()">Consultar</button>
-                        </div>*@
                     </div>
-                    <!-- Mapa do Google Maps -->
-                    <div id="map"></div>
                 </form>
             </div>
             <div class="modal-footer">

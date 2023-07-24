@@ -6,43 +6,18 @@
 <link href="/css/ponto/style.css" rel="stylesheet" />
 <script src="/JsPagina/DepartamentoPessoal/PontoEletronico.js"></script>
 
-<script src="/frameworks/JQuery/jQuery.min.js"></script>
-
-<script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.min.js"></script>
-
 <link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css">
 
-<div class="container mb-2" style="padding-top:10px;">
-    <div class="row">
-        <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-            <div class="cracha">
-                <div class="foto">
-                    <img id="fotoUsuario" src="/icons/homem-usuario.png" alt="Foto do colaborador" class="foto-usuario">
-                </div>
-                <div class="informacoes">
-                    <p class="matricula"></p>
-                    <p class="nome"></p>
-                    <p class="cpf"></p>
-                    <p class="email"></p>
-                    <p class="status"></p>
-                    <p class="funcao"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div class="container">
-    <div class="title" style="text-align: center; font-weight: bold;">Data: </div>
+    <div class="title" style="text-align: center; font-weight: bold; padding-top:30px; font-size:30px;" id="divDataDia"></div>
     <div class="row">
         <div class="col-12 text-center">
             <div class="card mb-3 mt-4 my-div mx-auto" id="cardInicioDia">
                 <div class="card-header">Início do Dia</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada1">Início do Dia</button>
-                        <input type="time" class="form-control input-time d-none" id="entrada1" placeholder="Informe a hora de entrada">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada1" onclick="inicioDia();" id="btnInicioDia">Início do Dia</button>
+                        <input type="time" class="form-control input-time d-none" id="entrada1" style="text-align:center;"  placeholder="Informe a hora de entrada" disabled>
                     </div>
                 </div>
             </div>
@@ -55,8 +30,8 @@
                 <div class="card-header">Início do Almoço</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <button class="btn btn-primary toggle-input" data-bs-target="#saida1">Início do Almoço</button>
-                        <input type="time" class="form-control input-time d-none" id="saida1" placeholder="Informe a hora de saída">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#saida1" onclick="inicioAlmoco();" id="btnInicioAlmoco">Início do Almoço</button>
+                        <input type="time" class="form-control input-time d-none" id="saida1" style="text-align:center;" placeholder="Informe a hora de saída" disabled>
                     </div>
                 </div>
             </div>
@@ -69,8 +44,8 @@
                 <div class="card-header">Fim Almoço</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada2">Fim Almoço</button>
-                        <input type="time" class="form-control input-time d-none" id="entrada2" placeholder="Informe a hora de entrada">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#entrada2" onclick="fimAlmoco();" id="btnFimAlmoco">Fim Almoço</button>
+                        <input type="time" class="form-control input-time d-none" id="entrada2" style="text-align:center;" placeholder="Informe a hora de entrada" disabled>
                     </div>
                 </div>
             </div>
@@ -83,8 +58,8 @@
                 <div class="card-header">Fim Dia</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <button class="btn btn-primary toggle-input" data-bs-target="#saida2">Fim Dia</button>
-                        <input type="time" class="form-control input-time d-none" id="saida2" placeholder="Informe a hora de saída">
+                        <button class="btn btn-primary toggle-input" data-bs-target="#saida2" onclick="fimDia();" id="btnFimDia">Fim Dia</button>
+                        <input type="time" class="form-control input-time d-none" style="text-align:center;" id="saida2" placeholder="Informe a hora de saída" disabled>
                     </div>
                 </div>
             </div>
@@ -97,7 +72,7 @@
                 <div class="card-header">Jornada</div>
                 <div class="card-body">
                     <div class="form-group">
-                        <input type="time" class="form-control" value="08:00" readonly>
+                        <input type="time" class="form-control" readonly id="cronometroJornada" disabled style="text-align:center;">
                     </div>
                 </div>
             </div>
@@ -108,8 +83,8 @@
         <div class="col-12 text-center">
             <div class="card mb-3 mt-4 my-div mx-auto">
                 <!-- Aumentei a margem inferior para criar mais espaço -->
-                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#folhaDePontoModal"
-                        id="historico">
+                <button type="button" class="btn btn-warning" data-bs-target="#folhaDePontoModal"
+                        id="historico" onclick="abrirModalHistorico();">
                     Histórico
                 </button>
             </div>
@@ -119,7 +94,7 @@
 
 
 
-<div class="modal fade" id="folhaDePontoModal" aria-labelledby="folhaDePontoModalLabel" aria-hidden="true">
+<div class="modal modal-xl" id="folhaDePontoModal" aria-labelledby="folhaDePontoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -139,98 +114,12 @@
                         </tr>
                     </thead>
                     <tbody id="folhaDePontoBody">
-                        <!-- Linhas da folha de ponto -->
-                        <tr>
-                            <td>1</td>
-                            <td><input type="time" class="form-control" value="08:00"></td>
-                            <td><input type="time" class="form-control" value="12:00"></td>
-                            <td><input type="time" class="form-control" value="13:00"></td>
-                            <td><input type="time" class="form-control" value="18:00"></td>
-                            <td><input type="time" class="form-control" value="08:00" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="time" class="form-control" value="09:00"></td>
-                            <td><input type="time" class="form-control" value="12:30"></td>
-                            <td><input type="time" class="form-control" value="13:30"></td>
-                            <td><input type="time" class="form-control" value="18:30"></td>
-                            <td><input type="time" class="form-control" value="09:00" disabled></td>
-                        </tr>
-
-                        <tr>
-                            <td>1</td>
-                            <td><input type="time" class="form-control" value="08:00"></td>
-                            <td><input type="time" class="form-control" value="12:00"></td>
-                            <td><input type="time" class="form-control" value="13:00"></td>
-                            <td><input type="time" class="form-control" value="18:00"></td>
-                            <td><input type="time" class="form-control" value="08:00" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="time" class="form-control" value="09:00"></td>
-                            <td><input type="time" class="form-control" value="12:30"></td>
-                            <td><input type="time" class="form-control" value="13:30"></td>
-                            <td><input type="time" class="form-control" value="18:30"></td>
-                            <td><input type="time" class="form-control" value="09:00" disabled></td>
-                        </tr>
-
-                        <tr>
-                            <td>1</td>
-                            <td><input type="time" class="form-control" value="08:00"></td>
-                            <td><input type="time" class="form-control" value="12:00"></td>
-                            <td><input type="time" class="form-control" value="13:00"></td>
-                            <td><input type="time" class="form-control" value="18:00"></td>
-                            <td><input type="time" class="form-control" value="08:00" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="time" class="form-control" value="09:00"></td>
-                            <td><input type="time" class="form-control" value="12:30"></td>
-                            <td><input type="time" class="form-control" value="13:30"></td>
-                            <td><input type="time" class="form-control" value="18:30"></td>
-                            <td><input type="time" class="form-control" value="09:00" disabled></td>
-                        </tr>
-
-                        <tr>
-                            <td>1</td>
-                            <td><input type="time" class="form-control" value="08:00"></td>
-                            <td><input type="time" class="form-control" value="12:00"></td>
-                            <td><input type="time" class="form-control" value="13:00"></td>
-                            <td><input type="time" class="form-control" value="18:00"></td>
-                            <td><input type="time" class="form-control" value="08:00" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="time" class="form-control" value="09:00"></td>
-                            <td><input type="time" class="form-control" value="12:30"></td>
-                            <td><input type="time" class="form-control" value="13:30"></td>
-                            <td><input type="time" class="form-control" value="18:30"></td>
-                            <td><input type="time" class="form-control" value="09:00" disabled></td>
-                        </tr>
-
-                        <tr>
-                            <td>1</td>
-                            <td><input type="time" class="form-control" value="08:00"></td>
-                            <td><input type="time" class="form-control" value="12:00"></td>
-                            <td><input type="time" class="form-control" value="13:00"></td>
-                            <td><input type="time" class="form-control" value="18:00"></td>
-                            <td><input type="time" class="form-control" value="08:00" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="time" class="form-control" value="09:00"></td>
-                            <td><input type="time" class="form-control" value="12:30"></td>
-                            <td><input type="time" class="form-control" value="13:30"></td>
-                            <td><input type="time" class="form-control" value="18:30"></td>
-                            <td><input type="time" class="form-control" value="09:00" disabled></td>
-                        </tr>
 
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary">Salvar</button>
             </div>
         </div>
     </div>

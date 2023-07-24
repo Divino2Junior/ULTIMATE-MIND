@@ -23,6 +23,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual DbSet<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual DbSet<GrupoPermissao> GrupoPermissao { get; set; }
         public virtual DbSet<Obra> Obra { get; set; }
+        public virtual DbSet<ObraUsuario> ObraUsuario { get; set; }
         public virtual DbSet<Ponto> Ponto { get; set; }
         public virtual DbSet<Tela> Tela { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
@@ -32,7 +33,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=186.250.240.35\\MSSQLSERVER2022,14337;Initial Catalog=ultimate_mind;Persist Security Info=True;User ID=utimid;Password=Uy1m4j&90;");
+                optionsBuilder.UseSqlServer("Server=186.250.240.35\\MSSQLSERVER2022,14337;Database=ultimate_mind;User Id=utimid;Password=Uy1m4j&90;");
             }
         }
 
@@ -250,6 +251,29 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasConstraintName("FK_Obra_Cliente");
             });
 
+            modelBuilder.Entity<ObraUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdobraUsuario);
+
+                entity.Property(e => e.IdobraUsuario).HasColumnName("IDObraUsuario");
+
+                entity.Property(e => e.Idobra).HasColumnName("IDObra");
+
+                entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
+
+                entity.HasOne(d => d.IdobraNavigation)
+                    .WithMany(p => p.ObraUsuario)
+                    .HasForeignKey(d => d.Idobra)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObraUsuario_Obra");
+
+                entity.HasOne(d => d.IdusuarioNavigation)
+                    .WithMany(p => p.ObraUsuario)
+                    .HasForeignKey(d => d.Idusuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObraUsuario_Usuario");
+            });
+
             modelBuilder.Entity<Ponto>(entity =>
             {
                 entity.HasKey(e => e.Idponto);
@@ -306,6 +330,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                 entity.ToTable("Usuario", "dbo");
 
                 entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
+
+                entity.Property(e => e.ChaveSignatario).HasColumnType("text");
 
                 entity.Property(e => e.Cpf)
                     .IsRequired()

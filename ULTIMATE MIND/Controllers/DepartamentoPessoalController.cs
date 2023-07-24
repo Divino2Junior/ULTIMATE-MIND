@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -55,7 +56,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 if (string.IsNullOrEmpty(q))
                 {
-                    return context.Usuario.Where(r=> r.Idempresa == idEmpresa).Select(r => new
+                    return context.Usuario.Where(r => r.Idempresa == idEmpresa).Select(r => new
                     {
                         r.Idusuario,
                         Nome = r.Matricula + " - " + r.Nome
@@ -77,106 +78,6 @@ namespace ULTIMATE_MIND.Controllers
             }
 
         }
-
-        //public object BuscarUsuarios()
-        //{
-        //    try
-        //    {
-        //        var context = new ultimate_mindContext();
-        //        var idEmpresa = GetIDEmpresaLogada();
-
-        //        var users = context.Usuario.Where(r => r.Status != EnumStatusUsuario.Inativo.ID && r.Idempresa == idEmpresa).ToList();
-
-        //        if (users.Count > 0)
-        //        {
-        //            return users.Select(u => new
-        //            {
-        //                u.Idusuario,
-        //                u.Nome,
-        //                u.Cpf,
-        //                u.Matricula,
-        //                Funcao = u.IdcargoNavigation.NomeCargo
-        //            });
-        //        }
-
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Erro(ex);
-        //    }
-
-
-        //}
-
-        //public object SalvarUsuario(string dados)
-        //{
-        //    try
-        //    {
-        //        var context = new ultimate_mindContext();
-        //        var idEmpresa = GetIDEmpresaLogada();
-        //        var filtro = JsonConvert.DeserializeObject<FiltroSalvarUsuario>(dados);
-
-        //        if (filtro.IDUsuario == 0)
-        //        {
-        //            var user = new Usuario();
-        //            user.Idempresa = idEmpresa;
-        //            user.Nome = filtro.Nome;
-        //            user.Matricula = filtro.Matricula.ToString();
-        //            user.Cpf = filtro.Cpf;
-        //            user.Senha = new Util().GetHashMD5(filtro.Cpf.Substring(0, 4));
-        //            user.Idcargo = filtro.IDCargo;
-        //            user.Email = filtro.Email;
-        //            user.DataNascimento = filtro.DataNascimento;
-        //            user.Status = filtro.Status;
-        //            user.Telefone = filtro.Telefone;
-        //            user.Rg = filtro.Rg;
-        //            user.IdgrupoPermissao = filtro.IDGrupoPermissao;
-        //            context.Add(user);
-        //            context.SaveChanges();
-        //        }
-        //        else
-        //        {
-        //            var usuario = context.Usuario.Where(r => r.Idusuario == filtro.IDUsuario).FirstOrDefault();
-        //            if (usuario != null)
-        //            {
-        //                if (usuario.Nome != filtro.Nome)
-        //                    usuario.Nome = filtro.Nome;
-        //                if (usuario.Senha != filtro.Senha)
-        //                    usuario.Senha = new Util().GetHashMD5(filtro.Senha.Substring(0, 4));
-        //                if (usuario.Matricula != filtro.Matricula.ToString())
-        //                    usuario.Matricula = filtro.Matricula.ToString();
-        //                if (usuario.Cpf != filtro.Cpf)
-        //                    usuario.Cpf = filtro.Cpf;
-        //                if (usuario.Idcargo != filtro.IDCargo)
-        //                    usuario.Idcargo = filtro.IDCargo;
-        //                if (usuario.Email != filtro.Email)
-        //                    usuario.Email = filtro.Email;
-        //                if (usuario.DataNascimento != filtro.DataNascimento)
-        //                    usuario.DataNascimento = filtro.DataNascimento;
-        //                if (usuario.Status != filtro.Status)
-        //                    usuario.Status = filtro.Status;
-        //                if (usuario.Telefone != filtro.Telefone)
-        //                    usuario.Telefone = filtro.Telefone;
-        //                if (usuario.Rg != filtro.Rg)
-        //                    usuario.Rg = filtro.Rg;
-        //                if (usuario.IdgrupoPermissao != filtro.IDGrupoPermissao)
-        //                    usuario.IdgrupoPermissao = filtro.IDGrupoPermissao;
-
-        //                context.Entry(usuario);
-        //                context.SaveChanges();
-        //            }
-        //            else
-        //                return Erro("Usuário não encontrado. Procure o suporte!!");
-        //        }
-
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Erro(ex);
-        //    }
-        //}
 
         public IActionResult InserirContraCheque(IFormFile arquivoPdf, int usuario, DateTime mesReferencia)
         {
@@ -248,7 +149,7 @@ namespace ULTIMATE_MIND.Controllers
 
                 var retorno = new List<ContraChequeDTO>();
 
-                foreach (var item in  contrasCheques)
+                foreach (var item in contrasCheques)
                 {
 
                     string mesFormatado = item.Referencia.ToString("MMMM", new CultureInfo("pt-BR"));
@@ -308,7 +209,7 @@ namespace ULTIMATE_MIND.Controllers
 
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
@@ -356,7 +257,7 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         contraCheque.UrlPdf = "/ContraCheques/" + nomeArquivo;
                     }
-                   
+
                     retorno.Add(contraCheque);
                 }
 
@@ -367,10 +268,323 @@ namespace ULTIMATE_MIND.Controllers
                     return null;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Erro(ex);
             }
         }
+
+        public object ConsultarPontoDia()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var usuario = GetUsuarioLogado();
+                var ponto = context.Ponto.Where(r => r.DataPonto.Date == DateTime.Now.Date && r.Idusuario == usuario.IDUsuario).FirstOrDefault();
+
+                var retorno = new PontoMarcadoDTO();
+
+                retorno.DataAtual = DateTime.Now.ToString("dd/MM/yyyy");
+                if (ponto != null)
+                {
+                    retorno.InicioDia = ponto.InicioDia == null ? null : ponto.InicioDia.Value.ToString("HH:mm");
+                    retorno.InicioAlmoco = ponto.InicioAlmoco == null ? null : ponto.InicioAlmoco.Value.ToString("HH:mm");
+                    retorno.FimAlmoco = ponto.FimAlmoco == null ? null : ponto.FimAlmoco.Value.ToString("HH:mm");
+                    retorno.FimDia = ponto.FimDia == null ? null : ponto.FimDia.Value.ToString("HH:mm");
+                }
+                else
+                {
+                    retorno.InicioDia = null;
+                    retorno.InicioAlmoco = null;
+                    retorno.FimAlmoco = null;
+                    retorno.FimDia = null;
+                }
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+
+        }
+        public object SalvarMarcacaoPonto(string dados)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idempresa = GetIDEmpresaLogada();
+                var idUsuario = GetUsuarioLogado();
+                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<FiltroSalvarMarcacaoPonto>(dados);
+
+                var usuario = context.Usuario.Where(r => r.Idusuario == idUsuario.IDUsuario).FirstOrDefault();
+                var ponto = context.Ponto.Where(r => r.DataPonto.Date == DateTime.Now.Date && r.Idusuario == usuario.Idusuario).FirstOrDefault();
+
+                if (usuario.IsLiberacaoPonto == true)
+                {
+                    if (ponto == null)
+                    {
+                        var newPonto = new Ponto();
+                        if (obj.TipoMarcacao == EnumTipoMarcacao.InicioDia.ID)
+                        {
+                            newPonto.DataPonto = DateTime.Now.Date;
+                            newPonto.Idusuario = usuario.Idusuario;
+                            newPonto.InicioDia = DateTime.Now;
+                            newPonto.InicioDiaLat = new Util().GetCoordenada(obj.Latitude);
+                            newPonto.InicioDiaLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        else if (obj.TipoMarcacao == EnumTipoMarcacao.InicioAlmoco.ID)
+                        {
+                            newPonto.DataPonto = DateTime.Now.Date;
+                            newPonto.Idusuario = usuario.Idusuario;
+                            newPonto.InicioAlmoco = DateTime.Now;
+                            newPonto.InicioAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                            newPonto.InicioAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        else if (obj.TipoMarcacao == EnumTipoMarcacao.FimAlmoco.ID)
+                        {
+                            return Erro("Para finalizar o almoço é necessário iniciar o mesmo!");
+                        }
+                        else if (obj.TipoMarcacao == EnumTipoMarcacao.FimDia.ID)
+                        {
+                            return Erro("Para finalizar o dia é necessário iniciar o mesmo!");
+                        }
+
+                        context.Ponto.Add(newPonto);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        if (ponto.InicioDia == null && obj.TipoMarcacao == EnumTipoMarcacao.InicioDia.ID)
+                        {
+                            ponto.InicioDia = DateTime.Now;
+                            ponto.InicioDiaLat = new Util().GetCoordenada(obj.Latitude);
+                            ponto.InicioDiaLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        else if (ponto.InicioAlmoco == null && obj.TipoMarcacao == EnumTipoMarcacao.InicioAlmoco.ID)
+                        {
+                            ponto.InicioAlmoco = DateTime.Now;
+                            ponto.InicioAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                            ponto.InicioAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        else if (ponto.FimAlmoco == null && obj.TipoMarcacao == EnumTipoMarcacao.FimAlmoco.ID)
+                        {
+                            if (ponto.InicioAlmoco == null)
+                            {
+                                return Erro("Para finalizar o almoço é necessário iniciar o mesmo!");
+                            }
+
+                            ponto.FimAlmoco = DateTime.Now;
+                            ponto.FimAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                            ponto.FimAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        else if (ponto.FimDia == null && obj.TipoMarcacao == EnumTipoMarcacao.FimDia.ID)
+                        {
+                            if (ponto.InicioDia == null)
+                            {
+                                return Erro("Para finalizar o dia é necessário iniciar o mesmo!");
+                            }
+
+                            ponto.FimDia = DateTime.Now;
+                            ponto.FimDiaLat = new Util().GetCoordenada(obj.Latitude);
+                            ponto.FimDiaLong = new Util().GetCoordenada(obj.Longitude);
+                        }
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    // Suponha que a string de hora de entrada seja "10:30" e a string de hora de saída seja "17:45"
+                    string horaEntradaStr = usuario.HoraEntrada;
+                    string horaSaidaStr = usuario.HoraSaida;
+
+                    // Defina o formato da string de hora
+                    string formatoHora = "HH:mm";
+
+                    var horaAtual = DateTime.Now;
+
+                    // Converta as strings para objetos DateTime
+                    DateTime horaEntrada = DateTime.ParseExact(horaEntradaStr, formatoHora, CultureInfo.InvariantCulture);
+                    DateTime horaSaida = DateTime.ParseExact(horaSaidaStr, formatoHora, CultureInfo.InvariantCulture);
+
+                    // Defina a margem de 5 minutos antes e 15 minutos depois para a entrada e saída
+                    TimeSpan margemAntesEntrada = TimeSpan.FromMinutes(5);
+                    TimeSpan margemDepoisEntrada = TimeSpan.FromMinutes(15);
+
+                    // Verifique se a hora atual está dentro da margem de 5 minutos antes da hora de entrada e 15 minutos depois da hora de entrada
+                    bool dentroMargemAntesEntrada = (horaAtual >= horaEntrada.Add(-margemAntesEntrada));
+                    bool dentroMargemDepoisEntrada = (horaAtual <= horaEntrada.Add(margemDepoisEntrada));
+
+                    // Defina a margem de 5 minutos antes e 15 minutos depois para a saída
+                    TimeSpan margemAntesSaida = TimeSpan.FromMinutes(5);
+                    TimeSpan margemDepoisSaida = TimeSpan.FromMinutes(15);
+
+                    // Verifique se a hora atual está dentro da margem de 5 minutos antes da hora de saída e 15 minutos depois da hora de saída
+                    bool dentroMargemAntesSaida = (horaAtual >= horaSaida.Add(-margemAntesSaida));
+                    bool dentroMargemDepoisSaida = (horaAtual <= horaSaida.Add(margemDepoisSaida));
+
+                    // Verifique se a hora atual está dentro da margem permitida para a entrada ou saída
+                    if ((dentroMargemAntesEntrada && dentroMargemDepoisEntrada) || (dentroMargemAntesSaida && dentroMargemDepoisSaida))
+                    {
+                        string sql = @"
+                                SELECT *
+                                    FROM (
+                                        SELECT ou.*, 
+                                               o.Latitude AS ObraLatitude, 
+                                               o.Longitude AS ObraLongitude,
+                                               (6371 * 1000 *
+                                                ACOS(
+                                                    COS(RADIANS({0})) *
+                                                    COS(RADIANS(o.Latitude)) *
+                                                    COS(RADIANS({1}) - RADIANS(o.Longitude)) +
+                                                    SIN(RADIANS({0})) *
+                                                    SIN(RADIANS(o.Latitude))
+                                                )) AS distance
+                                        FROM ObraUsuario ou
+                                        INNER JOIN Obra o ON ou.IDObra = o.IDObra
+                                        WHERE ou.IDUsuario = {2}
+                                    ) AS dr
+                                    WHERE dr.distance < {3};
+                                    ";
+
+
+                        // Preencher os parâmetros da consulta SQL
+                        string formattedSql = string.Format(sql, obj.Latitude, obj.Longitude, usuario.Idusuario, 50); // Valor padrão de 50 para o raio
+
+                        var clientesProximos = context.ObraUsuario.FromSqlRaw(formattedSql).ToList();
+
+                        if (clientesProximos.Count > 0)
+                        {
+                            if (ponto == null)
+                            {
+                                var newPonto = new Ponto();
+                                if (obj.TipoMarcacao == EnumTipoMarcacao.InicioDia.ID)
+                                {
+                                    newPonto.DataPonto = DateTime.Now.Date;
+                                    newPonto.Idusuario = usuario.Idusuario;
+                                    newPonto.InicioDia = DateTime.Now;
+                                    newPonto.InicioDiaLat = new Util().GetCoordenada(obj.Latitude);
+                                    newPonto.InicioDiaLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                else if (obj.TipoMarcacao == EnumTipoMarcacao.InicioAlmoco.ID)
+                                {
+                                    newPonto.DataPonto = DateTime.Now.Date;
+                                    newPonto.Idusuario = usuario.Idusuario;
+                                    newPonto.InicioAlmoco = DateTime.Now;
+                                    newPonto.InicioAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                                    newPonto.InicioAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                else if (obj.TipoMarcacao == EnumTipoMarcacao.FimAlmoco.ID)
+                                {
+                                    return Erro("Para finalizar o almoço é necessario iniciar o mesmo!");
+                                }
+                                else if (obj.TipoMarcacao == EnumTipoMarcacao.FimDia.ID)
+                                {
+                                    return Erro("Para finalizar o dia é necessario iniciar o mesmo!");
+                                }
+                                context.Ponto.Add(newPonto);
+                                context.SaveChanges();
+                            }
+                            else
+                            {
+                                if (ponto.InicioDia == null && obj.TipoMarcacao == EnumTipoMarcacao.InicioDia.ID)
+                                {
+                                    ponto.InicioDia = DateTime.Now;
+                                    ponto.InicioDiaLat = new Util().GetCoordenada(obj.Latitude);
+                                    ponto.InicioDiaLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                else if (ponto.InicioAlmoco == null && obj.TipoMarcacao == EnumTipoMarcacao.InicioAlmoco.ID)
+                                {
+                                    ponto.InicioAlmoco = DateTime.Now;
+                                    ponto.InicioAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                                    ponto.InicioAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                else if (ponto.FimAlmoco == null && obj.TipoMarcacao == EnumTipoMarcacao.FimAlmoco.ID)
+                                {
+                                    if (ponto.InicioAlmoco == null)
+                                    {
+                                        return Erro("Para finalizar o almoço é necessario iniciar o mesmo!");
+                                    }
+
+                                    ponto.FimAlmoco = DateTime.Now;
+                                    ponto.FimAlmocoLat = new Util().GetCoordenada(obj.Latitude);
+                                    ponto.FimAlmocoLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                else if (ponto.FimDia == null && obj.TipoMarcacao == EnumTipoMarcacao.FimDia.ID)
+                                {
+                                    if (ponto.InicioDia == null)
+                                    {
+                                        return Erro("Para finalizar o dia é necessario iniciar o mesmo!");
+                                    }
+
+                                    ponto.FimDia = DateTime.Now;
+                                    ponto.FimDiaLat = new Util().GetCoordenada(obj.Latitude);
+                                    ponto.FimDiaLong = new Util().GetCoordenada(obj.Longitude);
+                                }
+                                context.Entry(ponto);
+                                context.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+                            return Erro("Não foi possivel realizar a marcação do ponto, você não esta proximo a nenhuma obra!!");
+                        }
+                    }
+                    else
+                    {
+                        return Erro("Não foi possível realizar a marcação do ponto, fora do período liberado!!");
+                    }
+                }
+
+                return ConsultarPontoDia();
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object ConsultarHistoricoPonto()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var usuario = GetUsuarioLogado();
+
+                var ponto = context.Ponto.Where(r => r.Idusuario == usuario.IDUsuario).Take(30).ToList();
+
+                var retorno = new List<PontoMarcadoDTO>();
+                if (ponto.Count > 0)
+                {
+                    foreach (var item in ponto)
+                    {
+                        var newRetorno = new PontoMarcadoDTO();
+                        newRetorno.DataAtual = item.DataPonto.ToString("dd/MM/yyyy");
+                        newRetorno.InicioDia = item.InicioDia == null ? null : item.InicioDia.Value.ToString("HH:mm");
+                        newRetorno.InicioAlmoco = item.InicioAlmoco == null ? null : item.InicioAlmoco.Value.ToString("HH:mm");
+                        newRetorno.FimAlmoco = item.FimAlmoco == null ? null : item.FimAlmoco.Value.ToString("HH:mm");
+                        newRetorno.FimDia = item.FimDia == null ? null : item.FimDia.Value.ToString("HH:mm");
+
+                        // Calcular a jornada de trabalho do dia
+                        TimeSpan jornada = TimeSpan.Zero;
+                        if (item.InicioDia != null && item.InicioAlmoco != null)
+                            jornada += item.InicioAlmoco.Value - item.InicioDia.Value;
+                        if (item.FimAlmoco != null && item.FimDia != null)
+                            jornada += item.FimDia.Value - item.FimAlmoco.Value;
+
+                        newRetorno.Jornada = jornada.ToString(@"hh\:mm");
+
+                        retorno.Add(newRetorno);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
     }
 }

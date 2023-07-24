@@ -31,6 +31,10 @@ namespace ULTIMATE_MIND.Controllers
         {
             return View();
         }
+        public IActionResult CadastroAssinatura()
+        {
+            return View();
+        }
 
         public object BuscarUsuarios()
         {
@@ -143,7 +147,7 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.Cpf = new Util().RemoveFormatacaoCPF(obj.Cpf);
                         isAlteracao = true;
                     }
-                    if (usuario.Telefone != new Util().RemoveFormatacaoTelefone(obj.Telefone))
+                    if (obj.Telefone != null && usuario.Telefone != new Util().RemoveFormatacaoTelefone(obj.Telefone))
                     {
                         usuario.Telefone = new Util().RemoveFormatacaoTelefone(obj.Telefone);
                         isAlteracao = true;
@@ -173,17 +177,17 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.IdgrupoPermissao = obj.IdGrupoPermissao;
                         isAlteracao = true;
                     }
-                    if (usuario.DataNascimento != DateTime.Parse(obj.DataNascimento))
+                    if (obj.DataNascimento != null && usuario.DataNascimento != DateTime.Parse(obj.DataNascimento))
                     {
                         usuario.DataNascimento = DateTime.Parse(obj.DataNascimento);
                         isAlteracao = true;
                     }
-                    if (usuario.DataAdmissao != DateTime.Parse(obj.DataAdmissao))
+                    if (obj.DataAdmissao != null && usuario.DataAdmissao != DateTime.Parse(obj.DataAdmissao))
                     {
                         usuario.DataAdmissao = DateTime.Parse(obj.DataAdmissao);
                         isAlteracao = true;
                     }
-                    if (usuario.DataDemissao != DateTime.Parse(obj.DataDemissao))
+                    if (obj.DataDemissao !=null && usuario.DataDemissao != DateTime.Parse(obj.DataDemissao))
                     {
                         usuario.DataDemissao = DateTime.Parse(obj.DataDemissao);
                         isAlteracao = true;

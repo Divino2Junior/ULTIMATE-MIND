@@ -15,7 +15,5 @@ namespace ULTIMATE_MIND.Arquitetura.DTO
         public string Latitude { get; set; }
         public string Telefone { get; set; }
         public string Email { get; set; }
-        public string UrlFoto { get; set; }
-        public IFormFile Imagem { get; set; }
     }
 }

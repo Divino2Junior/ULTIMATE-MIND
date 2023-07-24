@@ -5,6 +5,11 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 {
     public partial class Obra
     {
+        public Obra()
+        {
+            ObraUsuario = new HashSet<ObraUsuario>();
+        }
+
         public int Idobra { get; set; }
         public int Idcliente { get; set; }
         public int Status { get; set; }
@@ -14,5 +19,6 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public string NomeObra { get; set; }
 
         public virtual Cliente IdclienteNavigation { get; set; }
+        public virtual ICollection<ObraUsuario> ObraUsuario { get; set; }
     }
 }
