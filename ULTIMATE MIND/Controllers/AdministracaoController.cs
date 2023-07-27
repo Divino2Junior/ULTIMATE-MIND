@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Filtros;
@@ -32,6 +34,11 @@ namespace ULTIMATE_MIND.Controllers
             return View();
         }
         public IActionResult CadastroAssinatura()
+        {
+            return View();
+        }
+
+        public IActionResult ImportacaoContraCheque()
         {
             return View();
         }
@@ -495,6 +502,67 @@ namespace ULTIMATE_MIND.Controllers
                             context.SaveChanges();
                         }
 
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object ImportarContraChequeArquivo()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idempresa = GetIDEmpresaLogada();
+
+                var usuarios = context.Usuario.Where(r => r.Idempresa == idempresa && r.Status == 1).ToList();
+
+                if (usuarios.Count > 0)
+                {
+                    foreach (var item in usuarios)
+                    {
+                        var pastaContracheques = this.CaminhoContraCheque; // Substitua pelo caminho correto da pasta
+                        var padraoNomeArquivo = $"ContraCheque_{item.Idusuario}_*.pdf";
+
+                        var arquivosContracheques = Directory.GetFiles(pastaContracheques, padraoNomeArquivo);
+
+                        foreach (var caminhoArquivo in arquivosContracheques)
+                        {
+                            // Extrair a referência do nome do arquivo usando expressão regular
+                            var regex = new Regex(@"_(\d{2}_\d{2}_\d{4})\.pdf");
+                            var match = regex.Match(caminhoArquivo);
+                            if (!match.Success)
+                                continue; // Não foi possível extrair a referência, pule para o próximo arquivo
+
+                            var referenciaArquivo = match.Groups[1].Value;
+                            var referencia = DateTime.ParseExact(referenciaArquivo, "dd_MM_yyyy", CultureInfo.InvariantCulture);
+
+                            // Verificar se o registro já existe na tabela ValidacaoContraCheque
+                            var registroExistente = context.ValidacaoContraCheque
+                                .FirstOrDefault(r => r.Idusuario == item.Idusuario && r.Referencia == referencia);
+
+                            if (registroExistente == null)
+                            {
+                                // O registro não existe, crie um novo
+                                var novoRegistro = new ValidacaoContraCheque
+                                {
+                                    Idusuario = item.Idusuario,
+                                    DataInserido = DateTime.Now,
+                                    Referencia = referencia,
+                                    NomeArquivo = caminhoArquivo,
+                                    Idempresa = idempresa,
+                                    IsAssinado = false // Defina o valor adequado para IsAssinado e DataAssinado se necessário
+                                };
+
+                                context.ValidacaoContraCheque.Add(novoRegistro);
+                                context.SaveChanges();
+                            }
+                        }
                     }
                 }
 

@@ -196,32 +196,50 @@ function fimDia() {
 }
 
 function salvarMarcacaoPontoResult(dados) {
+    var ultimaMarcacao = null;
 
     if (dados.inicioDia) {
-        $.alert("Marcação do Ponto: Inicio do dia, realizado com sucesso!");
-        $("#btnInicioDia").addClass("d-none");
-        $("#entrada1").removeClass("d-none");
-        $("#entrada1").val(dados.inicioDia);
+        ultimaMarcacao = "inicioDia";
     }
 
     if (dados.inicioAlmoco) {
-        $.alert("Marcação do Ponto: Inicio do Almoço, realizado com sucesso!");
-        $("#btnInicioAlmoco").addClass("d-none");
-        $("#saida1").removeClass("d-none");
-        $("#saida1").val(dados.inicioAlmoco);
+        ultimaMarcacao = "inicioAlmoco";
     }
 
     if (dados.fimAlmoco) {
-        $.alert("Marcação do Ponto: Fim do Almoço, realizado com sucesso!");
-        $("#btnFimAlmoco").addClass("d-none");
-        $("#entrada2").removeClass("d-none");
-        $("#entrada2").val(dados.fimAlmoco);
+        ultimaMarcacao = "fimAlmoco";
     }
+
     if (dados.fimDia) {
-        $.alert("Marcação do Ponto: Fim do dia, realizado com sucesso!");
-        $("#btnFimDia").addClass("d-none");
-        $("#saida2").removeClass("d-none");
-        $("#saida2").val(dados.fimDia);
+        ultimaMarcacao = "fimDia";
+    }
+
+    // Exibir a resposta apenas para a última marcação
+    switch (ultimaMarcacao) {
+        case "inicioDia":
+            $.alert("Marcação do Ponto: Inicio do dia, realizado com sucesso!");
+            $("#btnInicioDia").addClass("d-none");
+            $("#entrada1").removeClass("d-none");
+            $("#entrada1").val(dados.inicioDia);
+            break;
+        case "inicioAlmoco":
+            $.alert("Marcação do Ponto: Inicio do Almoço, realizado com sucesso!");
+            $("#btnInicioAlmoco").addClass("d-none");
+            $("#saida1").removeClass("d-none");
+            $("#saida1").val(dados.inicioAlmoco);
+            break;
+        case "fimAlmoco":
+            $.alert("Marcação do Ponto: Fim do Almoço, realizado com sucesso!");
+            $("#btnFimAlmoco").addClass("d-none");
+            $("#entrada2").removeClass("d-none");
+            $("#entrada2").val(dados.fimAlmoco);
+            break;
+        case "fimDia":
+            $.alert("Marcação do Ponto: Fim do dia, realizado com sucesso!");
+            $("#btnFimDia").addClass("d-none");
+            $("#saida2").removeClass("d-none");
+            $("#saida2").val(dados.fimDia);
+            break;
     }
 }
 

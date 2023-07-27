@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
@@ -49,7 +51,7 @@ namespace ULTIMATE_MIND.Controllers
                 var use = GetUsuarioLogado();
 
                 var usuario = context.Usuario
-                    .Include(r=> r.IdcargoNavigation)
+                    .Include(r => r.IdcargoNavigation)
                     .Where(r => r.Idusuario == use.IDUsuario).FirstOrDefault();
 
                 var retorno = new HomeDTO();
@@ -75,5 +77,48 @@ namespace ULTIMATE_MIND.Controllers
                 return Erro(ex);
             }
         }
+        public IActionResult GetMenu()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var usuarioLogado = GetUsuarioLogado();
+                var idempresa = GetIDEmpresaLogada();
+
+                // Caminho do arquivo XML do menu
+                var menuFilePath = Path.Combine(Directory.GetCurrentDirectory(), "menu.xml");
+
+                // Ler o arquivo XML e deserializar para o modelo MenuModel
+                var serializer = new XmlSerializer(typeof(MenuModel));
+                using (var reader = new StreamReader(menuFilePath))
+                {
+                    var menu = (MenuModel)serializer.Deserialize(reader);
+
+                    // Obter as permissões do usuário logado
+                    var permissoesJson = HttpContext.User.Claims
+                        .FirstOrDefault(c => c.Type == Constantes.UsuarioPermissoes)?.Value;
+
+                    if (!string.IsNullOrEmpty(permissoesJson))
+                    {
+                        var telasPermitidas = JsonConvert.DeserializeObject<List<string>>(permissoesJson);
+
+                        // Filtrar o menu para conter apenas as telas permitidas
+                        menu.Items = menu.Items.Where(item => telasPermitidas.Contains(item.Tela)).ToArray();
+
+                        // Retornar as informações do menu filtrado como JSON
+                        return Json(new { menu.Items });
+                    }
+
+                    // Se não tiver permissões definidas, retornar um menu vazio
+                    return Json(new { Items = new List<MenuItem>() });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }); // Ou outra resposta para indicar o erro adequadamente
+            }
+        }
+
     }
 }
+

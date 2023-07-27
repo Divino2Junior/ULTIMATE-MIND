@@ -351,6 +351,10 @@ namespace ULTIMATE_MIND.Controllers
                         }
 
                         context.Ponto.Add(newPonto);
+
+
+                        usuario.IsLiberacaoPonto = false;
+                        context.Entry(usuario);
                         context.SaveChanges();
                     }
                     else
@@ -389,6 +393,9 @@ namespace ULTIMATE_MIND.Controllers
                             ponto.FimDiaLat = new Util().GetCoordenada(obj.Latitude);
                             ponto.FimDiaLong = new Util().GetCoordenada(obj.Longitude);
                         }
+
+                        usuario.IsLiberacaoPonto = false;
+                        context.Entry(usuario);
                         context.SaveChanges();
                     }
                 }
@@ -412,19 +419,17 @@ namespace ULTIMATE_MIND.Controllers
                     TimeSpan margemDepoisEntrada = TimeSpan.FromMinutes(15);
 
                     // Verifique se a hora atual está dentro da margem de 5 minutos antes da hora de entrada e 15 minutos depois da hora de entrada
-                    bool dentroMargemAntesEntrada = (horaAtual >= horaEntrada.Add(-margemAntesEntrada));
-                    bool dentroMargemDepoisEntrada = (horaAtual <= horaEntrada.Add(margemDepoisEntrada));
+                    bool dentroMargemEntrada = ((horaAtual >= horaEntrada.Add(-margemAntesEntrada)) && (horaAtual <= horaEntrada.Add(margemDepoisEntrada)));
 
                     // Defina a margem de 5 minutos antes e 15 minutos depois para a saída
                     TimeSpan margemAntesSaida = TimeSpan.FromMinutes(5);
                     TimeSpan margemDepoisSaida = TimeSpan.FromMinutes(15);
 
                     // Verifique se a hora atual está dentro da margem de 5 minutos antes da hora de saída e 15 minutos depois da hora de saída
-                    bool dentroMargemAntesSaida = (horaAtual >= horaSaida.Add(-margemAntesSaida));
-                    bool dentroMargemDepoisSaida = (horaAtual <= horaSaida.Add(margemDepoisSaida));
+                    bool dentroMargemSaida = ((horaAtual >= horaSaida.Add(-margemAntesSaida)) && (horaAtual <= horaSaida.Add(margemDepoisSaida)));
 
                     // Verifique se a hora atual está dentro da margem permitida para a entrada ou saída
-                    if ((dentroMargemAntesEntrada && dentroMargemDepoisEntrada) || (dentroMargemAntesSaida && dentroMargemDepoisSaida))
+                    if (dentroMargemEntrada || dentroMargemSaida)
                     {
                         string sql = @"
                                 SELECT *
@@ -567,10 +572,24 @@ namespace ULTIMATE_MIND.Controllers
 
                         // Calcular a jornada de trabalho do dia
                         TimeSpan jornada = TimeSpan.Zero;
-                        if (item.InicioDia != null && item.InicioAlmoco != null)
-                            jornada += item.InicioAlmoco.Value - item.InicioDia.Value;
-                        if (item.FimAlmoco != null && item.FimDia != null)
-                            jornada += item.FimDia.Value - item.FimAlmoco.Value;
+                        DateTime limiteJornada = item.DataPonto.Date.AddDays(1); // Limite é o próximo dia 00:00
+
+                        if (item.InicioDia != null)
+                        {
+                            if (item.FimDia != null)
+                            {
+                                jornada = item.FimDia.Value - item.InicioDia.Value;
+                            }
+                            else
+                            {
+                                if (item.InicioAlmoco != null)
+                                {
+                                    jornada = item.FimAlmoco.Value - item.InicioDia.Value;
+                                }
+
+                                jornada = limiteJornada - item.InicioDia.Value;
+                            }
+                        }
 
                         newRetorno.Jornada = jornada.ToString(@"hh\:mm");
 
@@ -585,6 +604,5 @@ namespace ULTIMATE_MIND.Controllers
                 return Erro(ex);
             }
         }
-
     }
 }

@@ -26,7 +26,6 @@
     <div class="col-md-6" style="padding:20px;">
         <h4>Novo Contra-Cheque</h4>
         <form id="novoContraChequeForm" method="post" action="/DepartamentoPessoal/InserirContraCheque" enctype="multipart/form-data">
-            <div class="form-group">tipart/form-data">
             <div class="form-group">
                 <label for="selectUsuario">Usuário:</label>
                 <select class="js-example-responsive" style="width: 100%" id="selectUsuario" name="usuario">
@@ -36,11 +35,11 @@
                 <label for="mesReferencia">Mês de Referência:</label>
                 <input type="month" class="form-control mb-3" id="mesReferencia" name="mesReferencia">
             </div>
+            <div class="form-group">
                 <label for="arquivoPdf">Arquivo PDF:</label>
                 <input type="file" class="form-control-file mb-3" id="arquivoPdf" name="arquivoPdf">
             </div>
             <button type="submit" class="btn btn-primary" id="btnInserirContraChque">Inserir Contra-Cheque</button>
         </form>
     </div>
-
 </div>

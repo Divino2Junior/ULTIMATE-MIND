@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+	<item tela="Home" link="/Home/Index" />
+	<item tela="Administração" link="#">
+		<submenu>
+			<item tela="Empresa" link="/Administracao/Empresa" />
+			<item tela="Usuários" link="/Administracao/CadastroUsuario" />
+			<item tela="Grupo de Usuários" link="/Administracao/CadastroGrupoUsuario" />
+			<item tela="Cadastro Assinaturas" link="/Administracao/CadastroAssinatura" />
+			<item tela="Importar Contra Cheque" link="/Administracao/ImportacaoContraCheque" />
+		</submenu>
+	</item>
+	<item tela="Cliente" link="#">
+		<submenu>
+			<item tela="Clientes" link="/Cliente/CadastroCliente" />
+			<item tela="Obras" link="/Cliente/CadastroObra" />
+			<item tela="Atendimento" link="/Cliente/Atendimento" />
+		</submenu>
+	</item>
+	<item tela="Departamento Pessoal" link="#">
+		<submenu>
+			<item tela="Cadastro de Contra Cheque" link="/DepartamentoPessoal/CadastroContraCheque" />
+			<item tela="Contra Cheque" link="/DepartamentoPessoal/ContraCheque" />
+			<item tela="Ponto Eletrônico" link="/DepartamentoPessoal/PontoEletronico" />
+		</submenu>
+	</item>
+	<item tela="Relatórios" link="#">
+		<submenu>
+			<item tela="Atendimento" link="/RelatorioController/RelatorioAtendimento" />
+			<item tela="Contra Cheque" link="/RelatorioController/RelatorioValidacaoContraCheque" />
+			<item tela="Ponto Eletrônico" link="/RelatorioController/RelatorioPonto" />
+			<item tela="Exportação Ponto" link="/RelatorioController/RelatorioExportacao" />
+		</submenu>
+	</item>
+	<item tela="Sair" link="#" onclick="logout();" />
+</menu>

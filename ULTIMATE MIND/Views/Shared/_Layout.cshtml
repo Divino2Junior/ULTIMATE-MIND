@@ -35,70 +35,54 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-
-@*                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="menu-cracha">Crachá Digital</a>
-                    </li>*@
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-adm" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administração</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-adm">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="Empresa" id="menu-dropEmpresa">Empresa</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="CadastroGrupoUsuario" id="menu-dropGrupoUsuario">Grupo de Usuários</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="CadastroUsuario" id="menu-dropUsuario">Usuários</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Administracao" asp-action="CadastroAssinatura" id="menu-dropConfig">Cadastro Assinaturas</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Novas opções: Cliente -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-cliente" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cliente</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-cliente">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="CadastroCliente" id="menu-cadastro">Cadastro</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="CadastroObra" id="menu-obra">Cadastro de Obras</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="Atendimento" id="menu-atendimento">Atendimento</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-dptPessoal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Departamento Pessoal</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-dptPessoal">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="CadastroContraCheque" id="menu-dropCadastroContraCheque">Cadastro de Contra Cheque</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="ContraCheque" id="menu-dropContraCheque">Contra Cheque</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="DepartamentoPessoal" asp-action="PontoEletronico" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
-                        </ul>
-                    </li>
-
-
-                    <!-- Novas opções: Atendimento -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menu-relatorios" role="button" data-bs-toggle="dropdown" aria-expanded="false">Relatórios</a>
-                        <ul class="dropdown-menu" aria-labelledby="menu-relatorios">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioValidacaoContraCheque" id="menu-dropContraCheque">Contra Cheque</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioPonto" id="menu-dropPontoEletronico">Ponto Eletrônico</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioAtendimento" id="menu-dropContraCheque">Atendimento</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="RelatorioController" asp-action="RelatorioExportacao" id="menu-dropExportacao">Exportação</a></li>
-                        </ul>
-                    </li>
-
-					<li class="nav-item">
-                        <a class="nav-link" href="#" id="sair-btn" onclick="logout();">Sair</a>
-					</li>
-
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="menu-ul">
+                    <!-- O menu será montado aqui -->
                 </ul>
             </div>
         </div>
     </nav>
 
-
-
     <div id="content" style="height: 100vh;">
         @RenderBody()
     </div>
+
+    <script>
+        // Função para montar o menu com base nas telas permitidas
+        function montarMenuComTelasPermitidas() {
+            $.ajax({
+                type: 'GET',
+                url: '/Home/GetMenu', // Caminho para o método do controller que lê o menu do arquivo XML
+                dataType: 'json',
+                success: function (data) {
+                    var telasPermitidas = data.menu.Items;
+                    var menuItems = [];
+
+                    telasPermitidas.forEach(function (item) {
+                        if (item.tela === "Administração" || item.tela === "Cliente" || item.tela === "Departamento Pessoal" || item.tela === "Relatórios") {
+                            var submenuItems = [];
+                            item.submenu.forEach(function (subitem) {
+                                submenuItems.push('<li class="nav-item"><a class="nav-link" href="' + subitem.link + '">' + subitem.tela + '</a></li>');
+                            });
+                            menuItems.push('<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="menu-' + item.tela.replace(/\s+/g, '').toLowerCase() + '" role="button" data-bs-toggle="dropdown" aria-expanded="false">' + item.tela + '</a><ul class="dropdown-menu" aria-labelledby="menu-' + item.tela.replace(/\s+/g, '').toLowerCase() + '">' + submenuItems.join('') + '</ul></li>');
+                        } else {
+                            menuItems.push('<li class="nav-item"><a class="nav-link" href="' + item.link + '">' + item.tela + '</a></li>');
+                        }
+                    });
+
+                    // Adicione os itens do menu ao elemento com o ID "menu-ul"
+                    $('#menu-ul').append(menuItems.join(''));
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        // Chamando a função para montar o menu quando a página é carregada
+        $(document).ready(function () {
+            montarMenuComTelasPermitidas();
+        });
+    </script>
 </body>
 </html>
 

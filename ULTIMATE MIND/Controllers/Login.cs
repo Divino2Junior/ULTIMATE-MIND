@@ -79,7 +79,7 @@ namespace ULTIMATE_MIND.Controllers
                     Response.Cookies.Append(Constantes.EmpresaSelecionada, userBanco.Idempresa.ToString());
                     listaPermissoes.AddRange(context.Tela
                         .Where(r => r.IdgrupoPermissao == userBanco.IdgrupoPermissao && r.IdgrupoPermissaoNavigation.Idempresa == userBanco.Idempresa)
-                    .Select(r => r.Idtela.ToString()));
+                    .Select(r => r.NomeTela));
 
                     SetCookies(Constantes.EmpresaSelecionada, userBanco.Idempresa.ToString());
 
