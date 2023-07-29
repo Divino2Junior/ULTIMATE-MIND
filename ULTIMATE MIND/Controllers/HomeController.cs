@@ -105,6 +105,12 @@ namespace ULTIMATE_MIND.Controllers
                         // Filtrar o menu para conter apenas as telas permitidas
                         menu.Items = menu.Items.Where(item => telasPermitidas.Contains(item.Tela)).ToArray();
 
+                        // Filtrar os submenus para conter apenas as telas permitidas
+                        foreach (var item in menu.Items)
+                        {
+                            item.Submenu = item.Submenu.Where(submenuItem => telasPermitidas.Contains(submenuItem.Tela)).ToList();
+                        }
+
                         // Retornar as informações do menu filtrado como JSON
                         return Json(new { menu.Items });
                     }
