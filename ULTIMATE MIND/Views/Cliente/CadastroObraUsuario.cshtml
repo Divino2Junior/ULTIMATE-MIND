@@ -1,0 +1,96 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Relacionar Obra ao Usuário";
+}
+
+<script src="/frameworks/datatable/datatables.min.js?v=@ViewBag.Versao"></script>
+<link href="/frameworks/datatable/datatables.min.css?v=@ViewBag.Versao" rel="stylesheet" />
+
+<script type="text/javascript" src="/JsPagina/Cliente/CadastroObraUsuario.js?v=@ViewBag.Versao"></script>
+<link rel="stylesheet" href="/css/cadastroUsuario/style.css?v=@ViewBag.Versao">
+
+<style>
+
+    #m-imagem-preview-relacionamento-obra-usuario {
+        width: 200px; /* Defina a largura desejada */
+        height: 200px; /* Defina a altura desejada */
+        border-radius: 0;
+        object-fit: cover; /* Ajusta a imagem para preencher o contêiner */
+        object-position: center; /* Centraliza a imagem horizontalmente e verticalmente */
+        border: 5px solid #6a5cb8d0; /* Define a largura e estilo da borda */
+        border-color: #362694b2; /* Define a cor da borda */
+    }
+
+</style>
+
+<div class="table-bordered">
+    <h1 class="text-centerador">Relacionar Obra ao Usuário</h1>
+    <br>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="novoRelacionamentoObraUsuario();" id="novo">
+            Adicionar
+        </button>
+    </div>
+
+    <table id="tableRelacionamentoObraUsuario" class="table table-responsive">
+        <thead>
+            <tr class="titulo">
+                <th>Obra</th>
+                <th>Usuário</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Relacionamento Obra ao Usuário -->
+<div class="modal" id="modalRelacionarObraUsuario">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Relacionar Obra ao Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="relacionarObraUsuarioForm" method="POST" enctype="multipart/form-data">
+                    <div class="text-center mb-3">
+                        <label for="m-imagem-relacionamento-obra-usuario" class="col-form-label">Insira a imagem abaixo</label>
+                        <div class="image-upload">
+                            <label for="m-imagem-input-relacionamento-obra-usuario" class="imagem-input">
+                                <img src="/images/qr-code.png" id="m-imagem-preview-relacionamento-obra-usuario" class="">
+                                <span class="upload-icon"><i class="bi bi-camera-fill"></i></span>
+                            </label>
+                            <input hidden type="file" id="m-imagem-input-relacionamento-obra-usuario" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="selectObra" class="col-form-label">Obra</label>
+                                <select class="js-example-responsive" style="width: 100%" id="selectObra">
+                                    <!-- Opções de obras aqui -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="selectUsuario" class="col-form-label">Usuário</label>
+                                <select class="js-example-responsive" style="width: 100%" id="selectUsuario">
+                                    <!-- Opções de usuários aqui -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" id="btn-salvar-relacionamento-obra-usuario" onclick="salvarRelacionamentoObraUsuario();">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>

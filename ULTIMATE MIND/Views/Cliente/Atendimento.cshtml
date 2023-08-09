@@ -3,37 +3,44 @@
     ViewData["Title"] = "Atendimento";
 }
 
-<script src="/frameworks/datatable/datatables.min.js"></script>
-<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
-<script src="/JsPagina/Cliente/Atendimento.js"></script>
+<script src="/frameworks/datatable/datatables.min.js?v=@ViewBag.Versao"></script>
+<link href="/frameworks/datatable/datatables.min.css?v=@ViewBag.Versao" rel="stylesheet" />
+<script src="/JsPagina/Cliente/Atendimento.js?v=@ViewBag.Versao"></script>
+<link href="/css/atendimento/atendimento.css?v=@ViewBag.Versao" />
 
 <div class="container" style="padding-top:20px;">
     <div class="row">
-        <div class="col-md-6" style="padding-top:20px;">
-            <h2>Iniciar e Finalizar Atendimento</h2>
+        <div class="col-md-4" style="padding-top:20px;">
+            <h2>Atendimento</h2>
+            <div class="title" style="text-align: center; font-weight: bold; padding-top:10px;padding-bottom:10px; font-size:25px;" id="divDataDia"></div>
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Selecione o Cliente</h5>
+                    <h5 class="card-title">Selecione a Obra</h5>
                     <select id="selectCliente" class="js-example-responsive" style="width: 100%">
                     </select>
-                    <div style="padding-top:10px;">
+                    <div style="padding-top:10px; text-align: center">
                         <button id="btnIniciarAtendimento" class="btn btn-primary" onclick="BuscarQrCode();">Iniciar Atendimento</button>
-                    </div>                   
+                        <input type="time" class="form-control input-time d-none" id="inputInicioAtendimento" style="text-align:center;" disabled>
+                    </div>
                     <hr>
                     <h5 class="card-title">Observação</h5>
                     <textarea id="txtObservacao" class="form-control mb-3" rows="4"></textarea>
-                    <button id="btnFinalizarAtendimento" class="btn btn-primary" onclick="finalizarAtendimento();">Finalizar Atendimento</button>
+                    <div style="padding-top:10px; text-align: center">
+                        <button id="btnFinalizarAtendimento" class="btn btn-primary" onclick="finalizarAtendimento();">Finalizar Atendimento</button>
+                        <input type="time" class="form-control input-time d-none" id="inputFimAtendimento" style="text-align:center;" disabled>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-top:20px;">
+        <div class="col-md-8" style="padding-top:20px;">
             <h2>Atendimentos Realizados</h2>
             <table id="tabelaAtendimentos" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Cliente</th>
+                        <th>Obra</th>
                         <th>Data</th>
-                        <th>Status</th>
+                        <th>Início Atendimento</th>
+                        <th>Fim Atendimento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,7 +55,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">QR Code do Cliente</h5>
+                <h5 class="modal-title">QR Code da Obra</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body d-flex justify-content-center">
@@ -57,4 +64,28 @@
         </div>
     </div>
 </div>
+
+<div id="modalCapturarFoto" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <!-- Definindo a classe "modal-lg" para aumentar o tamanho da modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Capturar Foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Elemento de vídeo para exibir a câmera -->
+                <video id="video" class="camera-preview" autoplay></video>
+                <canvas id="canvas" class="camera-preview" style="display: none;"></canvas>
+            </div>
+            <div class="modal-footer">
+                <button id="btnTirarFoto" class="btn btn-primary" onclick="tirarFoto()">Tirar Foto</button>
+                <!-- Corrigindo o nome da função de enviar a foto -->
+                <button id="btnEnviarFoto" class="btn btn-success" onclick="enviarFoto()" style="display: none;">Enviar Foto</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 

@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ULTIMATE_MIND.Arquitetura.Util;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace ULTIMATE_MIND
 {
@@ -39,7 +40,10 @@ namespace ULTIMATE_MIND
 
                        options.LoginPath = new PathString("/");
                        options.ReturnUrlParameter = "RequestPath";
-                       options.SlidingExpiration = true;
+                       options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Altera o tempo de expiração
+                       options.SlidingExpiration = true; // Habilita a renovação do cookie a cada solicitação
+                       options.Cookie.MaxAge = TimeSpan.FromMinutes(60); // Define a idade máxima do cookie
+                       options.Cookie.IsEssential = true;
                    });
 
             services.Configure<FormOptions>(x =>

@@ -5,22 +5,20 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewData["Title"] - ULTIMATE MIND</title>
-        <link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/frameworks/Select2/select2.min.css" />
-        <link rel="stylesheet" href="/frameworks/jquery-confirm/dist/jquery-confirm.min.css" />
-        <link rel="stylesheet" href="~/Font-Awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="/frameworks/bootstrap-5.3.0/css/bootstrap.min.css?v=@ViewBag.Versao">
+        <link rel="stylesheet" href="/frameworks/Select2/select2.min.css?v=@ViewBag.Versao" />
+        <link rel="stylesheet" href="/frameworks/jquery-confirm/dist/jquery-confirm.min.css?v=@ViewBag.Versao" />
+        <link rel="stylesheet" href="~/Font-Awesome/css/font-awesome.min.css?v=@ViewBag.Versao" />
+        <link rel="stylesheet" href="~/css/site.css?v=@ViewBag.Versao" />
 
-        <script src="/frameworks/JQuery/jQuery.min.js"></script>
-        <script src="/frameworks/Select2/select2.min.js"></script>
-        <script src="/frameworks/jquery-confirm/dist/jquery-confirm.min.js"></script>
-        <script src="~/frameworks/jQuery-mask/jquery.mask.min.js"></script>
-        <script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/popper.js"></script>
-        <script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
-        <script type="text/javascript" src="~/js/site.js"></script>
-
-
-
+        <script src="/frameworks/JQuery/jQuery.min.js?v=@ViewBag.Versao"></script>
+        <script src="/frameworks/Select2/select2.min.js?v=@ViewBag.Versao"></script>
+        <script src="/frameworks/jquery-confirm/dist/jquery-confirm.min.js" ?v=@ViewBag.Versao></script>
+        <script src="~/frameworks/jQuery-mask/jquery.mask.min.js?v=@ViewBag.Versao"></script>
+        <script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/popper.js?v=@ViewBag.Versao"></script>
+        <script type="text/javascript" src="~/frameworks/bootstrap-5.3.0/js/bootstrap.bundle.min.js?v=@ViewBag.Versao"></script>
+        <script type="text/javascript" src="~/js/site.js?v=@ViewBag.Versao"></script>
+        <script type="text/javascript" src="~/js/siteMenu.js?v=@ViewBag.Versao"></script>
 
         @RenderSection("sripts", required: false)
     </environment>
@@ -35,54 +33,17 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="menu-ul">
-                    <!-- O menu será montado aqui -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="menu-dinamico">
+
                 </ul>
             </div>
         </div>
     </nav>
 
+
     <div id="content" style="height: 100vh;">
         @RenderBody()
     </div>
-
-    <script>
-        // Função para montar o menu com base nas telas permitidas
-        function montarMenuComTelasPermitidas() {
-            $.ajax({
-                type: 'GET',
-                url: '/Home/GetMenu', // Caminho para o método do controller que lê o menu do arquivo XML
-                dataType: 'json',
-                success: function (data) {
-                    var telasPermitidas = data.menu.Items;
-                    var menuItems = [];
-
-                    telasPermitidas.forEach(function (item) {
-                        if (item.tela === "Administração" || item.tela === "Cliente" || item.tela === "Departamento Pessoal" || item.tela === "Relatórios") {
-                            var submenuItems = [];
-                            item.submenu.forEach(function (subitem) {
-                                submenuItems.push('<li class="nav-item"><a class="nav-link" href="' + subitem.link + '">' + subitem.tela + '</a></li>');
-                            });
-                            menuItems.push('<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="menu-' + item.tela.replace(/\s+/g, '').toLowerCase() + '" role="button" data-bs-toggle="dropdown" aria-expanded="false">' + item.tela + '</a><ul class="dropdown-menu" aria-labelledby="menu-' + item.tela.replace(/\s+/g, '').toLowerCase() + '">' + submenuItems.join('') + '</ul></li>');
-                        } else {
-                            menuItems.push('<li class="nav-item"><a class="nav-link" href="' + item.link + '">' + item.tela + '</a></li>');
-                        }
-                    });
-
-                    // Adicione os itens do menu ao elemento com o ID "menu-ul"
-                    $('#menu-ul').append(menuItems.join(''));
-                },
-                error: function (error) {
-                    console.error(error);
-                }
-            });
-        }
-
-        // Chamando a função para montar o menu quando a página é carregada
-        $(document).ready(function () {
-            montarMenuComTelasPermitidas();
-        });
-    </script>
 </body>
 </html>
 

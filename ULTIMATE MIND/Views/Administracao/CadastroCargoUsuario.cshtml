@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Cadastro Cargo Usuário";
+}
+
+<script src="/frameworks/datatable/datatables.min.js?v=@ViewBag.Versao"></script>
+<link href="/frameworks/datatable/datatables.min.css?v=@ViewBag.Versao" rel="stylesheet" />
+<script type="text/javascript" src="/JsPagina/Administracao/CadastroCargoUsuario.js?v=@ViewBag.Versao"></script>
+<link rel="stylesheet" href="/css/cadastroUsuario/style.css?v=@ViewBag.Versao">
+
+<div class="table-bordered">
+    <h1 class="text-centerador">Cargo Usuários</h1>
+    <br>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="novoCargoUsuario();" id="novo">
+            Adicionar
+        </button>
+    </div>
+
+    <table id="tableCargoUsuario" class="table table-responsive">
+        <thead>
+            <tr class="titulo">
+                <th>ID Cargo Usuário</th>
+                <th>Nome</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="modalCargoUsuario" tabindex="-1" aria-labelledby="modalCargoUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCargoUsuarioLabel">Cadastro de Cargo de Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCargoUsuario">
+                    <div class="mb-3">
+                        <label for="nomeCargoUsuario" class="form-label">Nome do Cargo de Usuário:</label>
+                        <input type="text" class="form-control" id="nomeCargoUsuario" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="salvarCargoUsuario();">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+

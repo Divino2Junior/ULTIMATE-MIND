@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Data.SqlTypes;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,6 +12,9 @@ using ULTIMATE_MIND.Arquitetura.DTO;
 using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
 using ULTIMATE_MIND.Arquitetura.Util;
+using ZXing;
+using ZXing.Common;
+using ZXing.Presentation;
 
 namespace ULTIMATE_MIND.Controllers
 {
@@ -29,6 +34,10 @@ namespace ULTIMATE_MIND.Controllers
             return View();
         }
         public IActionResult CadastroObra()
+        {
+            return View();
+        }
+        public IActionResult CadastroObraUsuario()
         {
             return View();
         }
@@ -167,7 +176,7 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         NomeCliente = cliente.Nome,
                         Idempresa = idEmpresa,
-                        Cpf = cliente.Cpf == null? null : new Util().RemoveFormatacaoCPF(cliente.Cpf),
+                        Cpf = cliente.Cpf == null ? null : new Util().RemoveFormatacaoCPF(cliente.Cpf),
                         Cnpj = cliente.Cpnj == null ? null : new Util().RemoveFormatacaoCNPJ(cliente.Cpnj),
                         Status = cliente.Status,
                         Endereco = cliente.Endereco,
@@ -228,20 +237,21 @@ namespace ULTIMATE_MIND.Controllers
             {
                 var context = new ultimate_mindContext();
                 var user = GetUsuarioLogado();
-                var cliente = context.Cliente.Where(r => r.Idcliente == id).FirstOrDefault();
 
-                if (cliente == null)
-                    throw new Exception("Cliente não cadastrado");
+                var obra = context.ObraUsuario.Where(r => r.Idusuario == user.IDUsuario && r.Idobra == id).FirstOrDefault();
+
+                if (obra == null)
+                    throw new Exception("Obra não relacionada ao Usuário");
 
 
                 var atendimento = context.Atendimento.Where(r => r.Idusuario == user.IDUsuario
-                && r.Idcliente == id && r.DataAtendimento == DateTime.Now.Date && r.FimAtendimento == null).FirstOrDefault();
+                && r.IdobraUsuario == id && r.DataAtendimento == DateTime.Now.Date && r.FimAtendimento == null).FirstOrDefault();
 
                 var novoAtendimento = new Atendimento();
                 if (atendimento == null)
                 {
                     novoAtendimento.Idusuario = user.IDUsuario;
-                    novoAtendimento.Idcliente = cliente.Idcliente;
+                    novoAtendimento.IdobraUsuario = obra.IdobraUsuario;
                     novoAtendimento.DataAtendimento = DateTime.Now.Date;
                     novoAtendimento.InicioAtendimento = DateTime.Now;
                     novoAtendimento.InicioAtendimentoLat = latitude;
@@ -251,18 +261,21 @@ namespace ULTIMATE_MIND.Controllers
                     context.SaveChanges();
                 }
                 else
-                    throw new Exception("Já existe atendimento hoje para este cliente");
+                    throw new Exception("Já existe atendimento em aberto para este cliente");
 
-                var caminhoFoto = Path.Combine(CaminhoQrCodeCliente, $"{cliente.Idcliente}.jpg");
+                var caminhoFoto = Path.Combine(CaminhoQrCodObra, $"{obra.Idobra}_{obra.Idusuario}.jpg");
 
+                var IdAtendimento = 0;
+                var urlFoto = "";
                 if (System.IO.File.Exists(caminhoFoto))
                 {
-                    var IdAtendimento = novoAtendimento == null ? atendimento.Idatendimento : novoAtendimento.Idatendimento;
-                    var urlFoto = "/QrCodeCliente/" + $"{cliente.Idcliente}.jpg";
+                    IdAtendimento = novoAtendimento == null ? atendimento.Idatendimento : novoAtendimento.Idatendimento;
+                    urlFoto = "/QrCodeObra/" + $"{obra.Idobra}_{obra.Idusuario}.jpg";
                     return new { urlFoto, IdAtendimento };
                 }
 
-                return null;
+                IdAtendimento = novoAtendimento == null ? atendimento.Idatendimento : novoAtendimento.Idatendimento;
+                return new { urlFoto = "", IdAtendimento };
             }
             catch (Exception ex)
             {
@@ -278,20 +291,37 @@ namespace ULTIMATE_MIND.Controllers
                 var idempresa = GetIDEmpresaLogada();
                 var user = GetUsuarioLogado();
 
-                var atendimento = context.Atendimento
-                    .Include(r => r.IdclienteNavigation)
-                    .Where(r => r.Idusuario == user.IDUsuario && r.IdclienteNavigation.Idempresa == idempresa && r.DataAtendimento == DateTime.Now.Date)
+                var atendimentos = context.Atendimento
+                    .Include(r => r.IdobraUsuarioNavigation).ThenInclude(r => r.IdobraNavigation)
+                    .Where(r => r.Idusuario == user.IDUsuario && r.IdobraUsuarioNavigation.IdobraNavigation.IdclienteNavigation.Idempresa == idempresa
+                    && r.DataAtendimento.Date == DateTime.Now.Date)
                     .Select(r => new
                     {
                         r.Idatendimento,
-                        r.Idcliente,
-                        Nome = r.IdclienteNavigation.NomeCliente,
+                        r.IdobraUsuario,
+                        Nome = r.IdobraUsuarioNavigation.IdobraNavigation.NomeObra,
                         Data = r.DataAtendimento.ToString("dd/MM/yyyy"),
-                        Status = r.FimAtendimento == null ? "Pendente" : "Finalizado"
+                        InicioAtendimento = r.InicioAtendimento.ToString("HH:mm"),
+                        FimAtendimento = r.FimAtendimento == null ? "" : r.FimAtendimento.Value.ToString("HH:mm"),
+                        Status = "Finalizado"
 
-                    }).OrderBy(r => r.Status != "Pendente").ToList();
+                    }).ToList();
 
-                return atendimento;
+                var atendimento = context.Atendimento
+                    .Include(r => r.IdobraUsuarioNavigation).ThenInclude(r => r.IdobraNavigation)
+                    .Where(r => r.Idusuario == user.IDUsuario && r.IdobraUsuarioNavigation.IdobraNavigation.IdclienteNavigation.Idempresa == idempresa
+                    && r.DataAtendimento.Date == DateTime.Now.Date && r.FimAtendimento == null)
+                    .Select(r => new
+                    {
+                        r.Idatendimento,
+                        r.IdobraUsuario,
+                        IdObra = r.IdobraUsuarioNavigation.Idobra,
+                        Nome = r.IdobraUsuarioNavigation.IdobraNavigation.NomeObra,
+                        Data = r.DataAtendimento.ToString("dd/MM/yyyy"),
+                        InicioAtendimento = r.InicioAtendimento.ToString("HH:mm")
+                    }).FirstOrDefault();
+
+                return new { atendimento, atendimentos };
             }
             catch (Exception ex)
             {
@@ -338,7 +368,7 @@ namespace ULTIMATE_MIND.Controllers
                 var idEmpresa = GetIDEmpresaLogada();
 
                 var obras = context.Obra
-                    .Include(r=> r.IdclienteNavigation).Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
+                    .Include(r => r.IdclienteNavigation).Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(r => r.Idcliente)
                     .Select(r => new
                     {
                         r.Idobra,
@@ -361,7 +391,7 @@ namespace ULTIMATE_MIND.Controllers
             {
                 var context = new ultimate_mindContext();
 
-                var obra = context.Obra.Include(r=> r.IdclienteNavigation). Where(r => r.Idobra == id).FirstOrDefault();
+                var obra = context.Obra.Include(r => r.IdclienteNavigation).Where(r => r.Idobra == id).FirstOrDefault();
 
                 if (obra == null)
                     return Erro("Cliente não encontrado!!");
@@ -459,5 +489,197 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
+        public object BuscarRelacionamentoObraUsuario()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+
+                var obrasUsuario = context.ObraUsuario
+                    .Include(r => r.IdobraNavigation)
+                    .Include(r => r.IdusuarioNavigation).Where(r => r.IdobraNavigation.IdclienteNavigation.Idempresa == idEmpresa)
+                    .Select(r => new
+                    {
+                        r.IdobraUsuario,
+                        NomeObra = r.IdobraNavigation.NomeObra,
+                        NomeUsuario = r.IdusuarioNavigation.Nome,
+                        Status = EnumStatusObra.Obtenha(r.IdobraNavigation.Status),
+                    }).ToList();
+
+                return obrasUsuario;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+        public object BuscarInfoRelacionamentoObraUsuario(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var relacionamento = context.ObraUsuario
+                    .Include(r => r.IdobraNavigation)
+                    .Include(r => r.IdusuarioNavigation)
+                    .Where(r => r.IdobraUsuario == id)
+                    .FirstOrDefault();
+
+                if (relacionamento == null)
+                    return Erro("Relacionamento obra-usuário não encontrado!");
+
+                var retorno = new RelacionamentoObraUsuarioDTO
+                {
+                    IdRelacionamentoObraUsuario = relacionamento.IdobraUsuario,
+                    IdObra = relacionamento.Idobra,
+                    NomeObra = relacionamento.IdobraNavigation.NomeObra,
+                    IdUsuario = relacionamento.Idusuario,
+                    NomeUsuario = relacionamento.IdusuarioNavigation.Nome,
+                    Status = relacionamento.IdobraNavigation.Status
+                };
+
+                var caminhoFoto = Path.Combine(CaminhoQrCodObra, $"{relacionamento.Idobra}_{relacionamento.Idusuario}.jpg");
+
+                if (System.IO.File.Exists(caminhoFoto))
+                {
+                    retorno.ImageUrl = "/QrCodeObra/" + $"{relacionamento.Idobra}_{relacionamento.Idusuario}.jpg";
+                }
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+        public IActionResult SalvarRelacionamentoObraUsuario(RelacionamentoObraUsuarioDTO relacionamentoObraUsuario)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                var idEmpresa = GetIDEmpresaLogada();
+
+                if (relacionamentoObraUsuario.IdRelacionamentoObraUsuario > 0)
+                {
+                    var relacionamentoExistente = context.ObraUsuario
+                        .FirstOrDefault(r => r.IdobraUsuario == relacionamentoObraUsuario.IdRelacionamentoObraUsuario);
+
+                    if (relacionamentoExistente == null)
+                        return Erro("Relacionamento obra-usuário não encontrado!");
+
+                    // Verifique se houve alteração nos campos
+                    var isAlteracao = false;
+
+                    if (relacionamentoExistente.Idobra != relacionamentoObraUsuario.IdObra)
+                    {
+                        relacionamentoExistente.Idobra = relacionamentoObraUsuario.IdObra;
+                        isAlteracao = true;
+                    }
+                    if (relacionamentoExistente.Idusuario != relacionamentoObraUsuario.IdUsuario)
+                    {
+                        relacionamentoExistente.Idusuario = relacionamentoObraUsuario.IdUsuario;
+                        isAlteracao = true;
+                    }
+
+                    if (relacionamentoObraUsuario.Foto != null && relacionamentoObraUsuario.Foto.Length > 0)
+                    {
+                        var nomeArquivo = $"{relacionamentoObraUsuario.IdObra}_{relacionamentoObraUsuario.IdUsuario}.jpg";
+                        var caminhoCompleto = this.CaminhoQrCodObra + nomeArquivo;
+
+                        var caminhoteste = HostingEnvironment.WebRootPath + "\\QrCodeObra\\" + $"{relacionamentoExistente.Idobra}_{relacionamentoExistente.Idusuario}.jpg";
+
+                        // Verifique se o arquivo já existe
+                        if (System.IO.File.Exists(caminhoCompleto))
+                        {
+                            // Se o arquivo existir, exclua-o antes de salvar o novo
+                            System.IO.File.Delete(caminhoCompleto);
+                        }
+
+                        if (relacionamentoObraUsuario.Foto != null)
+                        {
+                            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                            {
+                                relacionamentoObraUsuario.Foto.CopyTo(stream);
+                            }
+                        }
+                    }
+
+                    if (isAlteracao)
+                    {
+                        context.Entry(relacionamentoExistente);
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    var novoRelacionamento = new ObraUsuario
+                    {
+                        Idobra = relacionamentoObraUsuario.IdObra,
+                        Idusuario = relacionamentoObraUsuario.IdUsuario,
+                    };
+
+                    context.ObraUsuario.Add(novoRelacionamento);
+                    context.SaveChanges();
+
+                    var nomeArquivo = $"{relacionamentoObraUsuario.IdObra}_{relacionamentoObraUsuario.IdUsuario}.jpg";
+                    var caminhoCompleto = this.CaminhoQrCodObra + nomeArquivo;
+
+                    // Verifique se o arquivo já existe
+                    if (System.IO.File.Exists(caminhoCompleto))
+                    {
+                        // Se o arquivo existir, exclua-o antes de salvar o novo
+                        System.IO.File.Delete(caminhoCompleto);
+                    }
+
+                    if (relacionamentoObraUsuario.Foto != null)
+                    {
+                        using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                        {
+                            relacionamentoObraUsuario.Foto.CopyTo(stream);
+                        }
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object BuscarSelectObra()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+                string q = HttpContext.Request.Query["q"].ToString();
+
+                int idEmpresa = GetIDEmpresaLogada();
+
+                if (string.IsNullOrEmpty(q))
+                {
+                    return context.Obra.Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(u => u.Idcliente).Select(r => new
+                    {
+                        r.Idobra,
+                        Nome = r.NomeObra
+                    });
+                }
+
+                var clientes = context.Obra.Where(r => r.IdclienteNavigation.Idempresa == idEmpresa).OrderBy(u => u.Idcliente).Select(r => new
+                {
+                    r.Idobra,
+                    Nome = r.NomeObra
+                });
+
+                return clientes.Where(u => u.Nome.Normalize().Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
     }
 }

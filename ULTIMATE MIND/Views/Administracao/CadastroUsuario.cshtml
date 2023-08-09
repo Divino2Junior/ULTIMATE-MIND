@@ -3,10 +3,10 @@
     ViewData["Title"] = "Cadastro de Usuário";
 }
 
-<script src="/frameworks/datatable/datatables.min.js"></script>
-<link href="/frameworks/datatable/datatables.min.css" rel="stylesheet" />
-<script type="text/javascript" src="/JsPagina/Administracao/CadastroUsuario/script.js"></script>
-<link rel="stylesheet" href="/css/cadastroUsuario/style.css">
+<script src="/frameworks/datatable/datatables.min.js?v=@ViewBag.Versao"></script>
+<link href="/frameworks/datatable/datatables.min.css?v=@ViewBag.Versao" rel="stylesheet" />
+<script type="text/javascript" src="/JsPagina/Administracao/CadastroUsuario/script.js?v=@ViewBag.Versao"></script>
+<link rel="stylesheet" href="/css/cadastroUsuario/style.css?v=@ViewBag.Versao">
 
 
 
@@ -58,7 +58,7 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="m-matricula" class="col-form-label">Matrícula</label>
-                                <input type="text" maxlength="20" class="form-control" id="m-matricula" required>
+                                <input type="text" maxlength="20" class="form-control" id="m-matricula" disabled>
                             </div>
                         </div>
                         <div class="col">
@@ -144,6 +144,18 @@
                             <div class="mb-3">
                                 <label for="m-entrada" class="col-form-label">Hora de Entrada</label>
                                 <input type="time" class="form-control" id="m-entrada">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="m-saidaAlmoc" class="col-form-label">Hora Início Almoço</label>
+                                <input type="time" class="form-control" id="m-saidaAlmoco">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="m-entradaAlmoco" class="col-form-label">Hora Fim Almoço</label>
+                                <input type="time" class="form-control" id="m-entradaAlmoco">
                             </div>
                         </div>
                         <div class="col">

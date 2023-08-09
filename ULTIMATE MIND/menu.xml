@@ -1,36 +1,38 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<menu>
-	<item tela="Home" link="/Home/Index" />
-	<item tela="Administração" link="#">
+﻿<menu>
+	<item id="j1" tela="Home" link="/Home/Index" />
+	<item id="j2" tela="Administração" link="#">
 		<submenu>
-			<item tela="Empresa" link="/Administracao/Empresa" />
-			<item tela="Usuários" link="/Administracao/CadastroUsuario" />
-			<item tela="Grupo de Usuários" link="/Administracao/CadastroGrupoUsuario" />
-			<item tela="Cadastro Assinaturas" link="/Administracao/CadastroAssinatura" />
-			<item tela="Importar Contra Cheque" link="/Administracao/ImportacaoContraCheque" />
+			<item id="j2_1" tela="Empresa" link="/Administracao/Empresa" />
+			<item id="j2_2" tela="Usuários" link="/Administracao/CadastroUsuario" />
+			<item id="j2_3" tela="Grupo de Usuários" link="/Administracao/CadastroGrupoUsuario" />
+			<item id="j2_4" tela="Cadastro Assinaturas" link="/Administracao/CadastroAssinatura" />
+			<item id="j2_5" tela="Cadastro Cargo Usuário" link="/Administracao/CadastroCargoUsuario" />
 		</submenu>
 	</item>
-	<item tela="Cliente" link="#">
+	<item id="j3" tela="Cliente" link="#">
 		<submenu>
-			<item tela="Clientes" link="/Cliente/CadastroCliente" />
-			<item tela="Obras" link="/Cliente/CadastroObra" />
-			<item tela="Atendimento" link="/Cliente/Atendimento" />
+			<item id="j3_1" tela="Cadastro" link="/Cliente/CadastroCliente" />
+			<item id="j3_2" tela="Cadastro de Obras" link="/Cliente/CadastroObra" />
+			<item id="j3_3" tela="Usuário - Obra" link="/Cliente/CadastroObraUsuario" />
+			<!--<item id="j3_4" tela="Atendimento" link="/Cliente/Atendimento" />-->
 		</submenu>
 	</item>
-	<item tela="Departamento Pessoal" link="#">
+	<item id="j4" tela="Departamento Pessoal" link="#">
 		<submenu>
-			<item tela="Cadastro de Contra Cheque" link="/DepartamentoPessoal/CadastroContraCheque" />
-			<item tela="Contra Cheque" link="/DepartamentoPessoal/ContraCheque" />
-			<item tela="Ponto Eletrônico" link="/DepartamentoPessoal/PontoEletronico" />
+			<item id="j4_1" tela="Importar Contra Cheque" link="/Administracao/ImportacaoContraCheque" />
+			<item id="j4_2" tela="Cadastro de Contra Cheque" link="/DepartamentoPessoal/CadastroContraCheque" />
+			<item id="j4_3" tela="Contra Cheque" link="/DepartamentoPessoal/ContraCheque" />
+			<item id="j4_4" tela="Ponto Eletrônico" link="/DepartamentoPessoal/PontoEletronico" />
+			<item id="j4_5" tela="Liberação de Ponto" link="/DepartamentoPessoal/LiberacaoPonto" />
 		</submenu>
 	</item>
-	<item tela="Relatórios" link="#">
+	<item id="j5" tela="Relatórios" link="#">
 		<submenu>
-			<item tela="Atendimento" link="/RelatorioController/RelatorioAtendimento" />
-			<item tela="Contra Cheque" link="/RelatorioController/RelatorioValidacaoContraCheque" />
-			<item tela="Ponto Eletrônico" link="/RelatorioController/RelatorioPonto" />
-			<item tela="Exportação Ponto" link="/RelatorioController/RelatorioExportacao" />
+			<item id="j5_1" tela="Atendimento" link="/RelatorioController/RelatorioAtendimento" />
+			<item id="j5_2" tela="Contra Cheque" link="/RelatorioController/RelatorioValidacaoContraCheque" />
+			<item id="j5_3" tela="Ponto Eletrônico" link="/RelatorioController/RelatorioPonto" />
+			<item id="j5_4" tela="Exportação Ponto" link="/RelatorioController/RelatorioExportacao" />
 		</submenu>
 	</item>
-	<item tela="Sair" link="#" onclick="logout();" />
+	<item id="j6" tela="Sair" link="#" onclick="logout();" />
 </menu>

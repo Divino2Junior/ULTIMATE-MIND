@@ -7,11 +7,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using ULTIMATE_MIND.Arquitetura.DTO;
 using ULTIMATE_MIND.Arquitetura.Enum;
 using ULTIMATE_MIND.Arquitetura.Filtros;
 using ULTIMATE_MIND.Arquitetura.Model.UltimateMind;
 using ULTIMATE_MIND.Arquitetura.Util;
+using ULTIMATE_MIND.Models;
 
 namespace ULTIMATE_MIND.Controllers
 {
@@ -39,6 +41,11 @@ namespace ULTIMATE_MIND.Controllers
         }
 
         public IActionResult ImportacaoContraCheque()
+        {
+            return View();
+        }
+
+        public IActionResult CadastroCargoUsuario()
         {
             return View();
         }
@@ -108,6 +115,8 @@ namespace ULTIMATE_MIND.Controllers
                 retorno.NomeGrupoPermissao = usuario.IdgrupoPermissaoNavigation.Nome;
                 retorno.HoraEntrada = usuario.HoraEntrada == null ? "00:00" : usuario.HoraEntrada;
                 retorno.HoraSaida = usuario.HoraSaida == null ? "00:00" : usuario.HoraSaida;
+                retorno.HoraInicioAlmoco = usuario.HoraInicioAlmoco == null ? "00:00" : usuario.HoraInicioAlmoco;
+                retorno.HoraFimAlmoco = usuario.HoraFimAlmoco == null ? "00:00" : usuario.HoraFimAlmoco;
 
                 var caminhoFoto = Path.Combine(CaminhoFotoPerfil, $"{usuario.Idusuario}.jpg");
 
@@ -143,11 +152,6 @@ namespace ULTIMATE_MIND.Controllers
                     {
                         usuario.Nome = obj.Nome;
                         isAlteracao = false;
-                    }
-                    if (usuario.Matricula != obj.Matricula)
-                    {
-                        usuario.Matricula = obj.Matricula;
-                        isAlteracao = true;
                     }
                     if (usuario.Cpf != new Util().RemoveFormatacaoCPF(obj.Cpf))
                     {
@@ -194,7 +198,7 @@ namespace ULTIMATE_MIND.Controllers
                         usuario.DataAdmissao = DateTime.Parse(obj.DataAdmissao);
                         isAlteracao = true;
                     }
-                    if (obj.DataDemissao !=null && usuario.DataDemissao != DateTime.Parse(obj.DataDemissao))
+                    if (obj.DataDemissao != null && usuario.DataDemissao != DateTime.Parse(obj.DataDemissao))
                     {
                         usuario.DataDemissao = DateTime.Parse(obj.DataDemissao);
                         isAlteracao = true;
@@ -207,6 +211,16 @@ namespace ULTIMATE_MIND.Controllers
                     if (usuario.HoraSaida != obj.HoraSaida)
                     {
                         usuario.HoraSaida = obj.HoraSaida;
+                        isAlteracao = true;
+                    }
+                    if (usuario.HoraInicioAlmoco != obj.HoraInicioAlmoco)
+                    {
+                        usuario.HoraInicioAlmoco = obj.HoraInicioAlmoco;
+                        isAlteracao = true;
+                    }
+                    if (usuario.HoraFimAlmoco != obj.HoraFimAlmoco)
+                    {
+                        usuario.HoraFimAlmoco = obj.HoraFimAlmoco;
                         isAlteracao = true;
                     }
                     if (obj.Imagem != null && obj.Imagem.Length > 0)
@@ -238,9 +252,13 @@ namespace ULTIMATE_MIND.Controllers
                     DateTime dataNascimento;
                     var user = new Usuario();
 
+                    var ultimaMatricula = int.Parse(context.Usuario.Where(r => r.Idempresa == idEmpresa).OrderByDescending(r => Convert.ToInt32(r.Matricula)).Select(r => r.Matricula).FirstOrDefault());
+
+                    ultimaMatricula++;
+
                     user.Idempresa = idEmpresa;
                     user.Nome = obj.Nome;
-                    user.Matricula = obj.Matricula;
+                    user.Matricula = ultimaMatricula.ToString();
                     user.Cpf = new Util().RemoveFormatacaoCPF(obj.Cpf);
                     user.Idcargo = obj.IdCargo;
                     user.Email = obj.Email == null ? null : obj.Email;
@@ -254,6 +272,8 @@ namespace ULTIMATE_MIND.Controllers
                     user.DataDemissao = obj.DataDemissao == null ? null : DateTime.TryParse(obj.DataDemissao, out dataNascimento) ? (DateTime?)dataNascimento : null;
                     user.HoraEntrada = obj.HoraEntrada == null ? "00:00" : obj.HoraEntrada;
                     user.HoraSaida = obj.HoraSaida == null ? "00:00" : obj.HoraSaida;
+                    user.HoraInicioAlmoco = obj.HoraInicioAlmoco == null ? "00:00" : obj.HoraInicioAlmoco;
+                    user.HoraFimAlmoco = obj.HoraFimAlmoco == null ? "00:00" : obj.HoraFimAlmoco;
 
                     context.Usuario.Add(user);
                     context.SaveChanges();
@@ -424,6 +444,21 @@ namespace ULTIMATE_MIND.Controllers
             }
         }
 
+        public object ObterMenuXml()
+        {
+            // Caminho do arquivo XML do menu
+            var menuFilePath = Path.Combine(Directory.GetCurrentDirectory(), "menu.xml");
+
+            // Ler o arquivo XML e deserializar para o modelo MenuModel
+            var serializer = new XmlSerializer(typeof(MenuModel));
+            using (var reader = new StreamReader(menuFilePath))
+            {
+                var menu = (MenuModel)serializer.Deserialize(reader);
+
+                return menu.Items; // Retornar todo o menu sem filtrar
+            }
+        }
+
         public object SalvarPermissaoGrupoUsuario(string dados)
         {
             try
@@ -569,6 +604,85 @@ namespace ULTIMATE_MIND.Controllers
                 return Ok();
             }
             catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object BuscarCargoUsuarios()
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var cargosUsuarios = context.Cargo
+                    .Select(r => new
+                    {
+                        r.Idcargo,
+                        Nome = r.NomeCargo,
+                    }).ToList();
+
+                return cargosUsuarios;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+        public object BuscarInfoCargoUsuario(int id)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var cargosUsuarios = context.Cargo.Where(r => r.Idcargo == id)
+                    .Select(r => new
+                    {
+                        r.Idcargo,
+                        Nome = r.NomeCargo,
+                    }).FirstOrDefault();
+
+                return cargosUsuarios;
+            }
+            catch (Exception ex)
+            {
+                return Erro(ex);
+            }
+        }
+
+        public object SalvarCargoUsuario(string dados)
+        {
+            try
+            {
+                var context = new ultimate_mindContext();
+
+                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<FiltroSalvarCargo>(dados);
+
+                if(obj.IDCargo > 0)
+                {
+                    var cargo = context.Cargo.Where(r=> r.Idcargo == obj.IDCargo).FirstOrDefault();
+
+                    if(cargo != null)
+                    {
+                        if(cargo.NomeCargo != obj.nomeCargoUsuario)
+                        {
+                            cargo.NomeCargo = obj.nomeCargoUsuario;
+                            context.Entry(cargo);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+                else
+                {
+                    var newCargo = new Cargo();
+                    newCargo.NomeCargo = obj.nomeCargoUsuario;
+                    context.Add(newCargo);
+                    context.SaveChanges();
+                }
+
+                return Ok();
+            }
+            catch(Exception ex)
             {
                 return Erro(ex);
             }

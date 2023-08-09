@@ -3,6 +3,7 @@ var idGrupoUsuario = 0;
 $(document).ready(function () {
 
     Post("Administracao/BuscarGrupoUsuarios", montarTela, Erro);
+    Post("Administracao/ObterMenuXml/", construirArvoreMenu);
 
 });
 
@@ -50,6 +51,35 @@ function editarGrupoUsuario(id) {
     Post("Administracao/BuscarInfoGrupoUsuario/" + id, montarModalGrupoUsuario);
 }
 
+
+function construirArvoreMenu(menuCompleto) {
+    var htmlMenu = '<ul>';
+
+    for (var i = 0; i < menuCompleto.length; i++) {
+        var item = menuCompleto[i];
+
+        htmlMenu += '<li id="' + item.telaId + '">'; // Adicione o ID do item aqui
+        htmlMenu += '<a>' + item.tela + '</a>';
+
+        if (item.submenu && item.submenu.length > 0) {
+            htmlMenu += '<ul>';
+            for (var j = 0; j < item.submenu.length; j++) {
+                var subitem = item.submenu[j];
+                htmlMenu += '<li id="' + subitem.telaId + '"><a>' + subitem.tela + '</a></li>'; // Adicione o ID do subitem aqui
+            }
+            htmlMenu += '</ul>';
+        }
+
+        htmlMenu += '</li>';
+    }
+
+    htmlMenu += '</ul>';
+
+    // Inserir o HTML montado no elemento com ID "tree"
+    document.getElementById('tree').innerHTML = htmlMenu;
+}
+
+
 function montarModalGrupoUsuario(retorno) {
 
     limparModal();
@@ -79,6 +109,7 @@ function montarModalGrupoUsuario(retorno) {
 
     $("#modalGrupoUsuario").modal('show');
 }
+
 
 function marcarCheckboxes(listaValores) {
 

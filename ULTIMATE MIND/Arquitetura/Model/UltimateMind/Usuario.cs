@@ -9,6 +9,9 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         {
             Atendimento = new HashSet<Atendimento>();
             EmpresaUsuario = new HashSet<EmpresaUsuario>();
+            HistoricoLiberacaoPontoIdusuarioGestorNavigation = new HashSet<HistoricoLiberacaoPonto>();
+            HistoricoLiberacaoPontoIdusuarioLiberadoNavigation = new HashSet<HistoricoLiberacaoPonto>();
+            InverseIdusuarioGestorNavigation = new HashSet<Usuario>();
             ObraUsuario = new HashSet<ObraUsuario>();
             Ponto = new HashSet<Ponto>();
             ValidacaoContraCheque = new HashSet<ValidacaoContraCheque>();
@@ -35,12 +38,19 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public bool? IsLiberacaoPonto { get; set; }
         public bool? IsSignatario { get; set; }
         public string ChaveSignatario { get; set; }
+        public string HoraInicioAlmoco { get; set; }
+        public string HoraFimAlmoco { get; set; }
+        public int? IdusuarioGestor { get; set; }
 
         public virtual Cargo IdcargoNavigation { get; set; }
         public virtual Empresa IdempresaNavigation { get; set; }
         public virtual GrupoPermissao IdgrupoPermissaoNavigation { get; set; }
+        public virtual Usuario IdusuarioGestorNavigation { get; set; }
         public virtual ICollection<Atendimento> Atendimento { get; set; }
         public virtual ICollection<EmpresaUsuario> EmpresaUsuario { get; set; }
+        public virtual ICollection<HistoricoLiberacaoPonto> HistoricoLiberacaoPontoIdusuarioGestorNavigation { get; set; }
+        public virtual ICollection<HistoricoLiberacaoPonto> HistoricoLiberacaoPontoIdusuarioLiberadoNavigation { get; set; }
+        public virtual ICollection<Usuario> InverseIdusuarioGestorNavigation { get; set; }
         public virtual ICollection<ObraUsuario> ObraUsuario { get; set; }
         public virtual ICollection<Ponto> Ponto { get; set; }
         public virtual ICollection<ValidacaoContraCheque> ValidacaoContraCheque { get; set; }

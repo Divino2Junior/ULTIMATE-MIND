@@ -7,7 +7,6 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
     {
         public Cliente()
         {
-            Atendimento = new HashSet<Atendimento>();
             Obra = new HashSet<Obra>();
         }
 
@@ -24,7 +23,6 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public string Email { get; set; }
 
         public virtual Empresa IdempresaNavigation { get; set; }
-        public virtual ICollection<Atendimento> Atendimento { get; set; }
         public virtual ICollection<Obra> Obra { get; set; }
     }
 }

@@ -25,5 +25,7 @@ namespace ULTIMATE_MIND.Arquitetura.DTO
         public string ImgUsuario { get; set; }
         public string HoraEntrada { get; set; }
         public string HoraSaida { get; set; }
+        public string HoraInicioAlmoco { get; set; }
+        public string HoraFimAlmoco { get; set; }
     }
 }

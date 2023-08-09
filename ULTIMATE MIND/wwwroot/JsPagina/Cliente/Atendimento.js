@@ -1,5 +1,8 @@
 ﻿var idAtendimento;
 var isDisabled = false;
+var idCliente;
+
+let selectedClientId, latitude, longitude;
 
 $(document).ready(function () {
 
@@ -7,12 +10,12 @@ $(document).ready(function () {
 
     $('#selectCliente').select2({
         ajax: {
-            url: urlSite + 'Cliente/BuscarSelectCliente',
+            url: urlSite + 'Cliente/BuscarSelectObra',
             processResults: function (data) {
                 var dados = [];
                 $.each(data, function (index, item) {
                     var array = {
-                        id: item.idcliente,
+                        id: item.idobra,
                         text: item.nome
                     }
                     dados.push(array);
@@ -42,20 +45,15 @@ function montarTela(retorno) {
 
     mostrarLoading();
 
-    if (retorno != null && retorno != undefined) {
+    if (retorno.atendimentos != null && retorno.atendimentos != undefined) {
 
         tabelaAtendimentos.clear();
-
-        $.each(retorno, function (index, item) {
-
-            if (item.status === "Pendente") {
-                idAtendimento = item.idatendimento;
-                isDisabled = true;
-            }
-
+        $.each(retorno.atendimentos, function (index, item) {
             tabelaAtendimentos.row.add([
-                item.idcliente + " - " + item.nome,
+                item.nome,
                 item.data,
+                item.inicioAtendimento,
+                item.fimAtendimento,
                 item.status
             ]);
         });
@@ -68,9 +66,19 @@ function montarTela(retorno) {
         ocultarLoading();
     }
 
-    if (isDisabled) {
-        $("#selectCliente").addClass("disabled");
-        $("#btnIniciarAtendimento").addClass("disabled");
+    if (retorno.atendimento != null && retorno.atendimento != undefined) {
+
+        tag = "";
+        tag += "Data: " + retorno.atendimento.data;
+
+        $("#divDataDia").html(tag);
+        $("#btnIniciarAtendimento").addClass("d-none");
+        $("#inputInicioAtendimento").removeClass("d-none");
+        $("#inputInicioAtendimento").val(retorno.atendimento.inicioAtendimento);
+
+        var option = new Option(retorno.atendimento.nome, retorno.atendimento.idObra, true, true);
+        $('#selectCliente').append(option).trigger('change');
+        $("#selectCliente").prop("disabled", false);
     }
     else {
         $("#selectCliente").removeClass("disabled");
@@ -79,12 +87,10 @@ function montarTela(retorno) {
 }
 
 function BuscarQrCode() {
-
     if (isEmptyOrNull($("#selectCliente").val())) {
         Alerta("É necessário selecionar um cliente para continuar!");
         return;
     }
-
     // Obtém a geolocalização do navegador
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
@@ -101,36 +107,35 @@ function BuscarQrCode() {
         // Navegador não suporta geolocalização
         Alerta("Seu navegador não suporta geolocalização.");
     }
+
 }
 
 function retornoInicioAtendimento(retorno) {
 
-    if (retorno) {
+    if (retorno.urlFoto != null && retorno.urlFoto != "" && retorno.urlFoto != undefined) {
         // Atualiza o QR Code no modal
         $('#m-imagem-preview').attr('src', retorno.urlFoto);
 
-        // Exibe o modal
+        // Desabilita o Select2
+        $("#selectCliente").prop("disabled", true);
+        $("#btnIniciarAtendimento").addClass("disabled");
         $('#modalQRCode').modal('show');
-
-        // Se a foto não existe, exibir o ícone padrão
-        $.alert("Atendimento Iniciado com Sucesso");
-
         idAtendimento = retorno.idAtendimento;
+        Post("Cliente/BuscarAtendimentos", montarTela, Erro);
     } else {
-        // Se a foto não existe, exibir o ícone padrão
-        $.alert("Atendimento Iniciado com Sucesso");
+        // Chama a função para capturar a foto
+        capturarFoto();
     }
-    // Desabilitar o select e o botão de iniciar
-    $("#selectCliente").addClass("disabled");
-    $("#btnIniciarAtendimento").addClass("disabled");
-    limparTela();
-
-    Post("Cliente/BuscarAtendimentos", montarTela, Erro);
-
 }
 
 
 function finalizarAtendimento() {
+
+    var id = idAtendimento;
+    if (isEmptyOrNull($("#txtObservacao").val())) {
+        Alerta("É necessário inserir uma observação!");
+        return;
+    }
 
     // Obtém a geolocalização do navegador
     if (navigator.geolocation) {
@@ -138,13 +143,6 @@ function finalizarAtendimento() {
             // Extrai a latitude e longitude da posição atual
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
-
-            var id = idAtendimento;
-            if (isEmptyOrNull($("#txtObservacao").val())) {
-                Alerta("É necessário inserir uma observação!");
-                return;
-            }
-
             var observacao = $("#txtObservacao").val();
             var observacaoCodificada = encodeURIComponent(observacao);
 
@@ -171,4 +169,76 @@ function FinalizarAtendimentoResult() {
     $("#btnIniciarAtendimento").removeClass("disabled");
     $.alert("Atendimento Finalizado com Sucesso");
     Post("Cliente/BuscarAtendimentos", montarTela, Erro);
+}
+
+
+// Função para capturar a foto da câmera
+function capturarFoto() {
+    if (isEmptyOrNull($("#selectCliente").val())) {
+        Alerta("É necessário selecionar um cliente para continuar!");
+        return;
+    }
+
+    selectedClientId = $("#selectCliente").val();
+
+    // Obtém a geolocalização do navegador
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            // Extrai a latitude e longitude da posição atual
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+
+            // Acessar a câmera e abrir a modal com o vídeo da câmera
+            const videoElement = document.getElementById("video");
+            const constraints = { video: true };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function (stream) {
+                    videoElement.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error("Erro ao acessar a câmera:", error);
+                    alert("Erro ao acessar a câmera. Verifique as permissões e tente novamente.");
+                });
+
+            // Exibe a modal com o vídeo da câmera
+            $("#modalCapturarFoto").modal("show");
+        });
+    } else {
+        // Navegador não suporta geolocalização
+        console.error("Seu navegador não suporta geolocalização.");
+        alert("Seu navegador não suporta geolocalização.");
+    }
+}
+
+// Função para tirar a foto da câmera e exibir na tela
+function tirarFoto() {
+    const videoElement = document.getElementById("video");
+    const canvasElement = document.getElementById("canvas");
+    const context = canvasElement.getContext("2d");
+
+    // Ajustar o tamanho do canvas para a resolução do vídeo
+    canvasElement.width = videoElement.videoWidth;
+    canvasElement.height = videoElement.videoHeight;
+
+    // Capturar a foto e exibi-la
+    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    videoElement.style.display = "none";
+    canvasElement.style.display = "block";
+}
+
+// Função para enviar a foto e os dados para o servidor
+function enviarFoto() {
+    const canvasElement = document.getElementById("canvas");
+    const dataUrl = canvasElement.toDataURL("image/jpeg");
+
+    // Enviar a foto, ID do cliente, latitude e longitude para o servidor
+    Post("/Cliente/EnviarFotoCliente", {
+        foto: dataUrl,
+        clienteId: selectedClientId,
+        latitude: latitude,
+        longitude: longitude,
+    }, retornoInicioAtendimento);
+
+    // Esconde a modal da câmera
+    $("#modalCapturarFoto").modal("hide");
 }

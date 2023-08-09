@@ -169,6 +169,8 @@ function montarModalUsuario(retorno) {
         $('#m-dataDemissao').val(retorno.dataDemissao);
         $('#m-entrada').val(retorno.horaEntrada);
         $('#m-saida').val(retorno.horaSaida);
+        $('#m-saidaAlmoco').val(retorno.horaInicioAlmoco);
+        $('#m-entradaAlmoco').val(retorno.horaFimAlmoco);
 
         var option = new Option(retorno.nomeStatus, retorno.status, true, true);
         $('#selectStatus').append(option).trigger('change');
@@ -205,10 +207,6 @@ function salvarUsuario() {
         Alerta("Informe o nome do Colaborador");
         return;
     }
-    if (isEmptyOrNull($("#m-matricula").val())) {
-        Alerta("Informe a Matrícula");
-        return;
-    }
     if (isEmptyOrNull($("#m-cpf").val())) {
         Alerta("Informe o Cpf");
         return;
@@ -229,7 +227,6 @@ function salvarUsuario() {
     var formData = new FormData();
 
     formData.append('IdUsuario', idUsuario);
-    formData.append('Matricula', $('#m-matricula').val());
     formData.append('Nome', $('#m-nome').val());
     formData.append('Cpf', $('#m-cpf').val());
     formData.append('Telefone', $('#m-telefone').val());
@@ -243,6 +240,8 @@ function salvarUsuario() {
     formData.append('IdGrupoPermissao', $('#selectGrupoPermissao').val());
     formData.append('HoraEntrada', $('#m-entrada').val());
     formData.append('HoraSaida', $('#m-saida').val());
+    formData.append('HoraInicioAlmoco', $('#m-saidaAlmoco').val());
+    formData.append('HoraFimAlmoco', $('#m-entradaAlmoco').val());
 
     // Verifique se uma imagem foi selecionada
     var imagemInput = document.getElementById('m-imagem-input');
@@ -285,5 +284,7 @@ function limparModal() {
     $('#m-dataDemissao').val("");
     $('#m-entrada').val("");
     $('#m-saida').val("");
+    $('#m-saidaAlmoco').val("");
+    $('#m-entradaAlmoco').val("");
 }
 

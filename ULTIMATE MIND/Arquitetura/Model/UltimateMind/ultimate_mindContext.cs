@@ -22,6 +22,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
         public virtual DbSet<Empresa> Empresa { get; set; }
         public virtual DbSet<EmpresaUsuario> EmpresaUsuario { get; set; }
         public virtual DbSet<GrupoPermissao> GrupoPermissao { get; set; }
+        public virtual DbSet<HistoricoLiberacaoPonto> HistoricoLiberacaoPonto { get; set; }
         public virtual DbSet<Obra> Obra { get; set; }
         public virtual DbSet<ObraUsuario> ObraUsuario { get; set; }
         public virtual DbSet<Ponto> Ponto { get; set; }
@@ -53,7 +54,7 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.FimAtendimento).HasColumnType("datetime");
 
-                entity.Property(e => e.Idcliente).HasColumnName("IDCliente");
+                entity.Property(e => e.IdobraUsuario).HasColumnName("IDObraUsuario");
 
                 entity.Property(e => e.Idusuario).HasColumnName("IDUsuario");
 
@@ -61,11 +62,10 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
 
                 entity.Property(e => e.Observacao).HasColumnType("text");
 
-                entity.HasOne(d => d.IdclienteNavigation)
+                entity.HasOne(d => d.IdobraUsuarioNavigation)
                     .WithMany(p => p.Atendimento)
-                    .HasForeignKey(d => d.Idcliente)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Atendimento_Cliente");
+                    .HasForeignKey(d => d.IdobraUsuario)
+                    .HasConstraintName("FK_Atendimento_ObraUsuario");
 
                 entity.HasOne(d => d.IdusuarioNavigation)
                     .WithMany(p => p.Atendimento)
@@ -228,6 +228,35 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasConstraintName("FK_GrupoPermissao_Empresa");
             });
 
+            modelBuilder.Entity<HistoricoLiberacaoPonto>(entity =>
+            {
+                entity.HasKey(e => e.IdhistoricoLiberacaoPonto);
+
+                entity.ToTable("HistoricoLiberacaoPonto", "dbo");
+
+                entity.Property(e => e.IdhistoricoLiberacaoPonto).HasColumnName("IDHistoricoLiberacaoPonto");
+
+                entity.Property(e => e.DataHoraLiberacao).HasColumnType("datetime");
+
+                entity.Property(e => e.IdusuarioGestor).HasColumnName("IDUsuarioGestor");
+
+                entity.Property(e => e.IdusuarioLiberado).HasColumnName("IDUsuarioLiberado");
+
+                entity.Property(e => e.ObservacaoLiberacao).HasColumnType("text");
+
+                entity.HasOne(d => d.IdusuarioGestorNavigation)
+                    .WithMany(p => p.HistoricoLiberacaoPontoIdusuarioGestorNavigation)
+                    .HasForeignKey(d => d.IdusuarioGestor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_HistoricoLiberacaoPonto_Usuario");
+
+                entity.HasOne(d => d.IdusuarioLiberadoNavigation)
+                    .WithMany(p => p.HistoricoLiberacaoPontoIdusuarioLiberadoNavigation)
+                    .HasForeignKey(d => d.IdusuarioLiberado)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_HistoricoLiberacaoPonto_Usuario1");
+            });
+
             modelBuilder.Entity<Obra>(entity =>
             {
                 entity.HasKey(e => e.Idobra);
@@ -351,6 +380,14 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.HoraFimAlmoco)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.HoraInicioAlmoco)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.HoraSaida)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -360,6 +397,8 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                 entity.Property(e => e.Idempresa).HasColumnName("IDEmpresa");
 
                 entity.Property(e => e.IdgrupoPermissao).HasColumnName("IDGrupoPermissao");
+
+                entity.Property(e => e.IdusuarioGestor).HasColumnName("IDUsuarioGestor");
 
                 entity.Property(e => e.Matricula)
                     .IsRequired()
@@ -403,6 +442,11 @@ namespace ULTIMATE_MIND.Arquitetura.Model.UltimateMind
                     .HasForeignKey(d => d.IdgrupoPermissao)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Usuario_GrupoPermissao");
+
+                entity.HasOne(d => d.IdusuarioGestorNavigation)
+                    .WithMany(p => p.InverseIdusuarioGestorNavigation)
+                    .HasForeignKey(d => d.IdusuarioGestor)
+                    .HasConstraintName("FK_Usuario_Usuario");
             });
 
             modelBuilder.Entity<ValidacaoContraCheque>(entity =>
